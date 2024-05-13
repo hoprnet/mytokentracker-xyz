@@ -7,7 +7,8 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.simpleFlake {
       inherit self nixpkgs;
+      name = "token tracker app";
       shell = ./shell.nix;
-      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-darwin" "x86_64-darwin" ];
     };
 }

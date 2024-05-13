@@ -21,4 +21,10 @@ mkShell {
     macosPkgs
     linuxPkgs
   ];
+  shellHook = ''
+    deno install --unstable-worker-options --allow-read --allow-net --allow-env \
+      --allow-run --name denoflare --force --root .deno \
+      https://raw.githubusercontent.com/skymethod/denoflare/v0.6.0/cli/cli.ts
+    export PATH="$PWD/.deno/bin:$PATH";
+  '';
 }
