@@ -1,0 +1,19 @@
+name = "tokentracker"
+workers_dev = true
+usage_model = "unbound"
+compatibility_date = "2023-07-01"
+send_metrics = false
+main = "server/index.ts"
+tsconfig = "tsconfig.json"
+
+#[build]
+#command = "yarn && yarn build"
+
+[durable_objects]
+bindings = [
+  { name = "client_logs", class_name = "ClientLog" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["ClientLog"]

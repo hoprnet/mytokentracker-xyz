@@ -1,0 +1,53 @@
+{
+  "name": "token-tracker-app",
+  "version": "0.0.1",
+  "description": "An Ethereum RPC provider which gives access to the logs it gathers.",
+  "module": "./dist/index.mjs",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write 'server/*.{js,ts}' tsconfig.json build.js README.md '.github/**/*.yml'",
+    "build": "yarn build:backend",
+    "build:backend": "node build.js",
+    "types:check": "tsc",
+    "start-local-ssl-proxy": "local-ssl-proxy --source 8788 --target 8787",
+    "start-miniflare": "miniflare --live-reload",
+    "start": "react-scripts start",
+    "start-https": "HTTPS=true yarn start",
+    "build:frontend": "react-scripts build",
+    "lint": "eslint --ext .jsx .",
+    "lint:fix": "eslint --fix --ext .jsx .",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "wrangler": "^3.56.0",
+    "esbuild": "^0.21.3",
+    "local-ssl-proxy": "^2.0.5",
+    "miniflare": "^3",
+    "prettier": "^3.2.5",
+    "tslib": "^2.6.2",
+    "typescript": "^2.6.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

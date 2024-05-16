@@ -15,16 +15,11 @@ with pkgs;
 mkShell {
   buildInputs = [
     envsubst
-    # nodejs-20_x
-    # (yarn.override { nodejs = nodejs-20_x; })
-    deno
+    nodejs_20
+    (yarn.override { nodejs = nodejs_20; })
     macosPkgs
     linuxPkgs
+    curl
+    websocat
   ];
-  shellHook = ''
-    deno install --unstable-worker-options --allow-read --allow-net --allow-env \
-      --allow-run --name denoflare --force --root .deno \
-      https://raw.githubusercontent.com/skymethod/denoflare/v0.6.0/cli/cli.ts
-    export PATH="$PWD/.deno/bin:$PATH";
-  '';
 }
