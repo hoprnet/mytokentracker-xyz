@@ -1,7 +1,11 @@
-import type { Request as WorkerRequest, ExportedHandler, ExecutionContext } from '@cloudflare/workers-types';
-import { Env } from 'worker-configuration.js';
+import type {
+  Request as WorkerRequest,
+  ExportedHandler,
+  ExecutionContext,
+} from "@cloudflare/workers-types";
+import { Env } from "worker-configuration.js";
 
-import tokensFile from './tokens.json';
+import tokensFile from "./tokens.json";
 
 const tokens = tokensFile.tokens;
 
@@ -39,7 +43,7 @@ export async function handleRequest(
 
   if (path[0] == "logo") {
     const tokenAddress = path[1];
-    const tokenInfo = tokens.find((t) => t.address == tokenAddress)
+    const tokenInfo = tokens.find((t) => t.address == tokenAddress);
     if (tokenInfo) {
       const tokenLogoUrl = tokenInfo.logoURI;
       await logsObject.fetch(url, request.clone());

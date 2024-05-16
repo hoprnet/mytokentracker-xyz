@@ -1,14 +1,7 @@
-import { Request as WorkerRequest, DurableObjectState } from '@cloudflare/workers-types';
-
 export class ClientLog {
-  state: DurableObjectState;
-  env: Env;
-  sessions: WebSocket[];
-
-  constructor(state: DurableObjectState, env: Env) {
+  constructor(state, env) {
     this.state = state;
     this.env = env;
-    this.sessions = [];
   }
 
   async fetch(request: WorkerRequest) {
@@ -18,13 +11,14 @@ export class ClientLog {
         return new Response("expected websocket", { status: 400 });
       }
 
-      const pair = new WebSocketPair();
-      await this.handleWebsocketSession(pair[1]);
-      return new Response(null, { status: 101, webSocket: pair[0] });
+      const wsPair = new WebSocketPair();
+      const [client, server] = Object.values(wsPair);
+      this.state.acceptWebSocket(server);
+
+      return new Response(null, { status: 101, webSocket: client });
     }
 
     if (request.method == "GET") {
-      console.log("HANDLE GET");
       const data = JSON.stringify({
         ip: request.headers.get("CF-Connecting-IP"),
         country: request.headers.get("CF-IPCountry"),
@@ -37,32 +31,28 @@ export class ClientLog {
         },
       });
 
-      console.log(this.sessions);
-      this.sessions.forEach((session) => {
-        console.log("SEND", data.log)
-        session.send(data);
+      // traverse connections
+      this.state.getWebSockets().forEach((ws) => {
+        ws.send(data);
       });
     }
 
     return new Response("Not found", { status: 404 });
   }
 
-  async handleWebsocketSession(webSocket: WebSocket) {
-    webSocket.accept();
+  async webSocketMessage(ws, message) {
+    // ignore client messages
+  }
 
-    console.log("ACCEPT WS");
-    this.sessions.push(webSocket);
-    console.log(this.sessions);
+  async closeOrErrorHandler(ws) {
+    // ignore close and error
+  }
 
-    let closeOrErrorHandler = (evt) => {
-    console.log("CLOSE WS", evt);
+  async webSocketClose(webSocket, code, reason, wasClean) {
+    this.closeOrErrorHandler(webSocket);
+  }
 
-      this.sessions = this.sessions.filter((member) => member !== webSocket);
-    console.log(this.sessions);
-    };
-    webSocket.addEventListener("close", closeOrErrorHandler);
-    webSocket.addEventListener("error", closeOrErrorHandler);
+  async webSocketError(webSocket, error) {
+    this.closeOrErrorHandler(webSocket);
   }
 }
-
-interface Env {}

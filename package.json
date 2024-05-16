@@ -5,9 +5,7 @@
   "module": "./dist/index.mjs",
   "type": "module",
   "scripts": {
-    "format": "prettier --write 'server/*.{js,ts}' tsconfig.json build.js README.md '.github/**/*.yml'",
-    "build": "yarn build:backend",
-    "build:backend": "node build.js",
+    "format": "prettier --write 'server/*.{js,ts}' tsconfig.json README.md '.github/**/*.yml'",
     "types:check": "tsc",
     "start-local-ssl-proxy": "local-ssl-proxy --source 8788 --target 8787",
     "start-miniflare": "miniflare --live-reload",
