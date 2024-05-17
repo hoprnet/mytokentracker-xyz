@@ -15,4 +15,4 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           wranglerVersion: "3.56.0"
-          command: --experimental-versions versions upload
+          command: deploy --dry-run
