@@ -21,5 +21,6 @@ mkShell {
     linuxPkgs
     curl
     websocat
+    wrangler
   ];
 }
