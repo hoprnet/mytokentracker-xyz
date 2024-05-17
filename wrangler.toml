@@ -5,9 +5,6 @@ send_metrics = false
 main = "server/index.ts"
 tsconfig = "tsconfig.json"
 
-#[build]
-#command = "yarn && yarn build"
-
 [durable_objects]
 bindings = [
   { name = "client_logs", class_name = "ClientLog" }
@@ -16,3 +13,6 @@ bindings = [
 [[migrations]]
 tag = "v1"
 new_classes = ["ClientLog"]
+
+[placement]
+mode = "smart"
