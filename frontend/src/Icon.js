@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
 
-const serverurl = 'https://tokentracker.hoprnet.workers.dev' //'http://127.0.0.1:8787'
-
 function Icon(props) {
     const [icon, set_icon] = useState(null);
     const [ethAddress, set_ethAddress] = useState(null);
@@ -20,9 +18,12 @@ function Icon(props) {
     async function getIcon(ethAddress) {
         set_ethAddress(ethAddress);
         try {
-            const rez = await fetch(`${serverurl}/logo/${ethAddress}`, { cache: "no-store" })
+            const rez = await fetch(`https://${props.serverurl}/logo/${ethAddress}`, { cache: "no-store" })
             const base64 = await rez.text();
-            base64 && set_icon(base64)
+            if(base64 && base64.includes('base64')) {
+                console.log('Got icon', ethAddress, base64);
+                set_icon(base64);
+            }
         } catch (e) {
             console.warn(`No icon for ${ethAddress}`, e)
         }
@@ -30,17 +31,22 @@ function Icon(props) {
 
     async function getIcon_uHTTP(ethAddress) {
         set_ethAddress(ethAddress);
-
-        props.uHTTP
-            .fetch(`${serverurl}/logo/${ethAddress}`)
+        try {
+            props.uHTTP
+            .fetch(`https://${props.serverurl}/logo/${ethAddress}`)
             .then(async (resp) => {
                 const base64 = resp.text;
-                console.log('Got icon', ethAddress, base64)
-                base64 && set_icon(base64)
+                if(base64 && base64.includes('base64')) {
+                    console.log('Got icon through uHTTP', ethAddress, base64);
+                    set_icon(base64);
+                }
             })
             .catch((err) => {
                 console.error('uHTTP error:', err);
             });
+        } catch (e) {
+            console.warn(`No icon for ${ethAddress}`, e)
+        }
     }
 
     if (!icon) return <span>-</span>

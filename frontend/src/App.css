@@ -19,6 +19,10 @@
   text-wrap: pretty;
 }
 
+.portfolio-table tr {
+  height: 32px;
+}
+
 th.icon, td.icon {
   width: 50px;
   text-align: left;
@@ -32,4 +36,9 @@ th.name, td.name {
 th.balance, td.balance {
   width: 300px;
   text-align: left;
+}
+
+.portfolio-table img {
+  height: 24px;
+  width: 24px;
 }

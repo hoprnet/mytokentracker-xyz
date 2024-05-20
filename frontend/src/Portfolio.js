@@ -13,74 +13,12 @@ const uHTTP = new Routing.Routing(RPChToken, {
     forceZeroHop: true,
 });
 
-function Portfolio() {
+function Portfolio({serverurl}) {
     const [ethAddress, set_ethAddress] = useState('0x11b815efb8f581194ae79006d24e0d814b7697f6');
+    const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
     const [portfolioLoading, set_portfolioLoading] = useState(false);
     const [use_uHTTP, set_use_uHTTP] = useState(false);
-
-
-    useEffect(()=>{
-        set_portfolio({
-            "address": "0x11b815efb8f581194ae79006d24e0d814b7697f6",
-            "ETH": {
-                "price": {
-                    "rate": 3103.9042529431586,
-                    "diff": 0.01,
-                    "diff7d": 4.19,
-                    "ts": 1716196980,
-                    "marketCapUsd": 372861319456.65314,
-                    "availableSupply": 120126553.22827746,
-                    "volume24h": 11186674260.587378,
-                    "volDiff1": 22.080582208062054,
-                    "volDiff7": 27.237648868716022,
-                    "volDiff30": -28.344771144022815,
-                    "diff30d": -0.14953336253964267
-                },
-                "balance": 0,
-                "rawBalance": "0"
-            },
-            "tokens": [
-                {
-                    "tokenInfo": {
-                        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-                        "name": "WETH",
-                        "decimals": "18",
-                        "symbol": "WETH",
-                        "totalSupply": "3011142043716637120021982",
-                        "owner": "",
-                        "lastUpdated": 1716196500,
-                        "issuancesCount": 71936772,
-                        "price": {
-                            "rate": 3100.788561331202,
-                            "diff": -0.34,
-                            "diff7d": 4.84,
-                            "ts": 1716196500,
-                            "marketCapUsd": 0,
-                            "availableSupply": 0,
-                            "volume24h": 1145213443.9753768,
-                            "volDiff1": 34.04672546907844,
-                            "volDiff7": 11.262757103707429,
-                            "volDiff30": -31.243011228292787,
-                            "diff30d": 0.8455126566900333,
-                            "bid": 2944.99,
-                            "currency": "USD"
-                        },
-                        "holdersCount": 1023500,
-                        "website": "https://weth.io",
-                        "image": "/images/WETHc02aaa39.png",
-                        "ethTransfersCount": 5914406,
-                        "publicTags": [
-                            "Tokenized",
-                            "ETH"
-                        ]
-                    },
-                    "balance": 8.099342802935469e+21,
-                    "rawBalance": "8099342802935468579639"
-                },
-            ]
-        })
-    }, [])
 
     async function getData() {
         set_portfolioLoading(true);
@@ -116,18 +54,25 @@ function Portfolio() {
                 <input
                     type="button"
                     value="Get portfolio"
-                    onClick={() => { getData(ethAddress) }}
+                    onClick={() => {
+                        if(lastEthAddress !== ethAddress) {
+                            getData(ethAddress);
+                            set_lastEthAddress(lastEthAddress);
+                        }
+                        set_use_uHTTP(false);
+                    }}
                 />
-            </div>
-            <div>
                 <input
-                    type="checkbox"
-                    id="name"
-                    name="uHTTP"
-                    checked={use_uHTTP}
-                    onChange={() => { set_use_uHTTP(prev => !prev) }}
+                    type="button"
+                    value="I am feeling private"
+                    onClick={() => {
+                        if(lastEthAddress !== ethAddress) {
+                            getData(ethAddress);
+                            set_lastEthAddress(lastEthAddress);
+                        }
+                        set_use_uHTTP(true);
+                    }}
                 />
-                uHTTP
             </div>
             <div>
                 <table
@@ -157,13 +102,14 @@ function Portfolio() {
                         {
                             portfolio && portfolio.tokens && portfolio.tokens.map(token =>
                                 <tr
-                                    key={`${ethAddress}_${token?.tokenInfo?.address}`}
+                                    key={`${use_uHTTP}_${ethAddress}_${token?.tokenInfo?.address}`}
                                 >
                                     <td>
                                         <Icon
                                             ethAddress={token?.tokenInfo?.address}
                                             uHTTP={uHTTP}
                                             use_uHTTP={use_uHTTP}
+                                            serverurl={serverurl}
                                         />
                                     </td>
                                     <td>{token?.tokenInfo?.name}</td>
