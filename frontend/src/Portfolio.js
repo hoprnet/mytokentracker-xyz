@@ -56,6 +56,16 @@ function Portfolio() {
                 />
             </div>
             <div>
+                <input
+                    type="checkbox"
+                    id="name"
+                    name="uHTTP"
+                    checked={use_uHTTP}
+                    onChange={() => { set_use_uHTTP(prev => !prev) }}
+                />
+                uHTTP
+            </div>
+            <div>
                 <table
                     className='portfolio-table'
                 >
