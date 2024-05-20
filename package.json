@@ -19,11 +19,17 @@
   },
   "license": "MIT",
   "dependencies": {
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4",
+    "esbuild": "^0.21.3",
     "local-ssl-proxy": "^2.0.5",
-    "prettier": "^3.2.5"
+    "miniflare": "^3",
+    "prettier": "^3.2.5",
+    "tslib": "^2.6.2",
+    "typescript": "^2.6.2",
+    "wrangler": "^3.56.0"
   },
   "eslintConfig": {
     "extends": [

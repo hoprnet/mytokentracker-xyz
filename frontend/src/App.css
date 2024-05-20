@@ -1,0 +1,35 @@
+.App {
+  display: flex;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.portfolio, .logs {
+  width: 50%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+
+.logs {
+  overflow: auto;
+}
+
+.logs > pre {
+  text-wrap: pretty;
+}
+
+th.icon, td.icon {
+  width: 50px;
+  text-align: left;
+}
+
+th.name, td.name {
+  width: 300px;
+  text-align: left;
+}
+
+th.balance, td.balance {
+  width: 300px;
+  text-align: left;
+}
