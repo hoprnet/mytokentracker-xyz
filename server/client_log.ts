@@ -27,7 +27,7 @@ export class ClientLog {
           timestamp: new Date().toJSON(),
           userAgent: request.headers.get("User-Agent"),
           type: "request",
-          path: request.path,
+          path: new URL(request.url).pathname,
         },
       });
 
