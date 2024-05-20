@@ -4,6 +4,7 @@ import type {
   ExecutionContext,
 } from "@cloudflare/workers-types";
 import { Env } from "worker-configuration.js";
+const Buffer = require('buffer/').Buffer
 
 import tokensFile from "./tokens.json";
 
@@ -63,7 +64,15 @@ export async function handleRequest(
 
 async function fetchLogo(url: string, request: WorkerRequest) {
   return fetch(url, request).then(async function (response) {
-    return response;
+    const blob = await response.blob();
+    let buffer = Buffer.from(await blob.arrayBuffer());
+    const base64 =  "data:" + blob.type + ';base64,' + buffer.toString('base64');
+    return new Response(base64, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
   });
 }
 
