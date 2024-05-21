@@ -141,3 +141,7 @@ th.balance, td.balance {
 .log .req {
   font-weight: 600;
 }
+
+.myIp{
+  color: red;
+}
