@@ -43,6 +43,15 @@ export async function handleRequest(
   const clientLogsId = env.client_logs.idFromName("main-shared");
   const logsObject = env.client_logs.get(clientLogsId);
 
+  if (path[0] == "myip") {
+    const clientIp = request.headers.get("CF-Connecting-IP");
+    return new Response(clientIp, { status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
+  }
+
   if (path[0] == "logo") {
     const tokenAddress = path[1];
     const tokenInfo = tokens.find((t) => t.address == tokenAddress);
