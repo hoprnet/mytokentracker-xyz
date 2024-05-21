@@ -41,7 +41,7 @@ function Logs({serverurl}) {
     };
 
     const getMyIp = async () => {
-        const rez = await fetch('https://ifconfig.me/ip');
+        const rez = await fetch(`https://${serverurl}/myip`);
         const ip = await rez.text();
         set_myIp(ip);
     };
