@@ -38,8 +38,9 @@ export async function handleRequest(
   const contentType = request.headers.get("content-type");
   const method = request.method;
   const path = url.pathname.slice(1).split("/");
-  const clientIp = request.headers.get("CF-Connecting-IP");
-  const clientLogsId = env.client_logs.idFromName(clientIp);
+  // use single logs object because we want to broadcast all logs to every
+  // connected client
+  const clientLogsId = env.client_logs.idFromName("main-shared");
   const logsObject = env.client_logs.get(clientLogsId);
 
   if (path[0] == "logo") {
