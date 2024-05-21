@@ -4,19 +4,114 @@
   overflow: hidden;
 }
 
-.portfolio, .logs {
-  width: 50%;
+.portfolio-container, .logs {
+  width: calc(50% - 16px);
   flex-grow: 0;
   flex-shrink: 0;
 }
 
+.no-portfolio {
+  display: flex;
+  align-items: center;
+}
+
+.portfolio-table-container {
+  height: calc(100svh - 76px);
+  margin-bottom: 8px;
+}
+
+.portfolio-container img {
+  max-width: 100%;
+}
+
+.mtt-search-engine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.portfolio-present .mtt-search-engine {
+  align-items: flex-start;
+}
+
+.portfolio-present > .mtt-search-engine-container {
+  display: flex;
+  margin: 8px;
+  height: 51px;
+}
+
+@media only screen and (max-width: 1250px) {
+  .portfolio-present > .mtt-search-engine-container {
+    display: block;
+    overflow: hidden;
+  }
+  .portfolio-present > .mtt-search-engine-container {
+    height: 93px;
+  }
+  .portfolio-table-container {
+    height: calc(100svh - 118px);
+  }
+  .portfolio-table tbody {
+    max-height: calc(100svh - 155px);
+  }
+}
+
+.portfolio-present img {
+  max-width: 220px;
+  width: 100%;
+  object-fit: contain;
+  margin-right: 16px;
+}
+
+input[type='text'] {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+input[type='button'] {
+  margin-right: 4px;
+}
 
 .logs {
   overflow: auto;
+  margin: 8px;
+  border: darkgray 1px solid;
+  padding: 8px;
+  overflow-wrap: anywhere;
+
+  font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 18.5714px;
 }
+
+
 
 .logs > pre {
   text-wrap: pretty;
+}
+
+.portfolio-table {
+  width: calc(100% - 16px);
+  margin: 8px;
+  border: darkgray 1px solid;
+  height: 100%;
+}
+
+.portfolio-table tbody {
+  display: block;
+  overflow: auto;
+  max-height: calc(100svh - 114px);
+}
+
+.portfolio-table thead tr{
+  display: block;
+}
+
+.portfolio-table tr {
+  height: 32px;
 }
 
 th.icon, td.icon {
@@ -32,4 +127,17 @@ th.name, td.name {
 th.balance, td.balance {
   width: 300px;
   text-align: left;
+}
+
+.portfolio-table img {
+  height: 24px;
+  width: 24px;
+}
+
+.log {
+  margin-bottom: 10px;
+}
+
+.log .req {
+  font-weight: 600;
 }

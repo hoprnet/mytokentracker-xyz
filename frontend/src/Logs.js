@@ -1,48 +1,38 @@
 import { useEffect, useState } from "react";
 
-function Logs() {
-    const [log, setLog] = useState([]);
+function Logs({serverurl}) {
+    const [logs, add_Log] = useState([]);
 
     useEffect(() => {
         joinWebSocket();
-        //eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
     const joinWebSocket = () => {
-        const wsUrl = "wss://tokentracker.hoprnet.workers.dev/client_logs/websocket";
+        const wsUrl = `wss://${serverurl}/client_logs/websocket`;
         const ws = new WebSocket(wsUrl);
 
         ws.addEventListener("open", (event) => {
             console.log("debug websocket opened");
-            // currentWebSocket = ws;
-            // setConnectionStatus();
         });
 
         ws.addEventListener("message", (event) => {
             const data = JSON.parse(event.data);
-            addLogEntry(data.log);
-            //   getAndParseDataFromEntry(data.log);
-            //   updateIp(data.ip, data.country);
-            //   updateInfo(data.cf);
-            //   set_numberOfCalls(prevNumberOfCalls => prevNumberOfCalls + 1);
+            addLogEntry(data);
             console.log('debug ws message', event)
         });
 
         ws.addEventListener("close", (event) => {
             console.log("websocket closed, reconnecting:", event.code, event.reason);
-            //  unsetConnectionStatus();
             setTimeout(joinWebSocket(), 1000);
         });
 
         ws.addEventListener("error", (event) => {
             console.log("websocket error, reconnecting:", event);
-            // unsetConnectionStatus();
-            //   setTimeout(join(), 1000);
         });
     };
 
     const addLogEntry = (entry) => {
-        setLog((prevState) => {
+        add_Log((prevState) => {
           const newState = [...prevState, entry];
           return newState;
         });
@@ -50,11 +40,37 @@ function Logs() {
 
     return (
         <div className="logs">
-            <pre>
-                {JSON.stringify(log, undefined, 2)}
-            </pre>
+            {
+                logs.map((log)=>
+                    <Log log={log} />
+                )
+            }
         </div>
     );
 }
+
+
+function Log(props) {
+    const ip = props.log.ip;
+    const country = props.log.country;
+    const path = props.log.log.path;
+    const uesrAgent = props.log.log.userAgent;
+    const city = props.log?.cf?.city;
+    const postalCode = props.log?.cf?.postalCode;
+
+
+    return (
+        <div className="log">
+            <span className="req">REQ >></span><br/>{' '}
+            <span className="req">{'IP: '}</span>{ip}
+            {' '}<span className="req">{'country: '}</span>{country}
+            {' '}<span className="req">{'city: '}</span>{city}
+            {' '}<span className="req">{'postal code: '}</span>{postalCode}<br/>
+            <span className="req">{'url: '}</span>{path}<br/>
+            <span className="req">{'User Agent: '}</span>{uesrAgent}
+        </div>
+    );
+}
+
 
 export default Logs;
