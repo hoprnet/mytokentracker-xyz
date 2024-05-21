@@ -3,6 +3,7 @@ import { formatEther } from 'viem'
 import humanFormat from "human-format";
 import Icon from "./Icon";
 import { Routing } from '@hoprnet/phttp-lib';
+import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
@@ -847,17 +848,20 @@ function Portfolio({ serverurl }) {
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
             const json = await rez.json();
             let filtered = json;
-            if (filtered.tokens) {
-                filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)))
+            if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
+                if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
+                else filtered.tokens = [];
                 set_portfolio(filtered);
-                console.log(filtered)
+                console.log(filtered);
+            } else {
+                set_portfolio(null)
             }
         } finally {
             set_portfolioLoading(false);
         }
     }
 
-    const formatBalance = (balance) => humanFormat(Number(formatEther(balance), { maxDecimals: "auto" })).replace(' ', '') || '-';
+    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10,  lowercase: true }).replace(' ', '') || '-';
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
@@ -932,8 +936,7 @@ function Portfolio({ serverurl }) {
                                     </td>
                                     <td className="name">Ether</td>
                                     <td className="balance">
-                                        {portfolio?.ETH?.rawBalance && formatBalance(portfolio?.ETH?.rawBalance)}
-                                        {` `}
+                                        {portfolio?.ETH?.rawBalance && formatBalance(portfolio?.ETH?.rawBalance)}{` `}
                                         ETH
                                     </td>
 
@@ -942,7 +945,7 @@ function Portfolio({ serverurl }) {
                             {
                                 portfolio && portfolio.tokens && portfolio.tokens.map(token =>
                                     <tr
-                                        key={`${use_uHTTP}_${ethAddress}_${token?.tokenInfo?.address}`}
+                                        key={`${use_uHTTP}_${lastEthAddress}_${token?.tokenInfo?.address}`}
                                     >
                                         <td>
                                             <Icon
