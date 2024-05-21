@@ -923,7 +923,14 @@ function Portfolio({ serverurl }) {
                             {
                                 portfolio &&
                                 <tr>
-                                    <td className="icon">-</td>
+                                    <td className="icon">
+                                        <Icon
+                                            ethAddress={'0x0'}
+                                            uHTTP={uHTTP}
+                                            use_uHTTP={use_uHTTP}
+                                            serverurl={serverurl}
+                                        />
+                                    </td>
                                     <td className="name">Ether</td>
                                     <td className="balance">
                                         {portfolio?.ETH?.rawBalance && formatBalance(portfolio?.ETH?.rawBalance)}
