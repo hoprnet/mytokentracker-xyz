@@ -34,8 +34,12 @@ function Logs({serverurl}) {
     };
 
     const addLogEntry = (entry) => {
+        const entryWithId = {
+            ...entry,
+            uuid: window.crypto.randomUUID(),
+        }
         add_Log((prevState) => {
-          const newState = [...prevState, entry];
+          const newState = [entryWithId, ...prevState];
           return newState;
         });
     };
@@ -50,7 +54,11 @@ function Logs({serverurl}) {
         <div className="logs">
             {
                 logs.map((log)=>
-                    <Log log={log} myIp={myIp}/>
+                    <Log
+                        log={log}
+                        myIp={myIp}
+                        key={log.uuid}
+                    />
                 )
             }
         </div>
