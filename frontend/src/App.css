@@ -74,11 +74,13 @@ input[type='button'] {
 
 .logs {
   overflow: auto;
+  position: relative;
   margin: 8px;
   border: darkgray 1px solid;
   padding: 8px;
   overflow-wrap: anywhere;
-
+  background: black;
+  color: #1aff24;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
   font-size: 13px;
   font-style: normal;
@@ -87,7 +89,10 @@ input[type='button'] {
   line-height: 18.5714px;
 }
 
-
+.logs-buttons {
+  position: sticky;
+  top: 0;
+}
 
 .logs > pre {
   text-wrap: pretty;

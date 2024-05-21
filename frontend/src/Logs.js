@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-function Logs({serverurl}) {
-    const [logs, add_Log] = useState([]);
+function Logs({ serverurl }) {
+    const [logs, set_Log] = useState([]);
+    const [logsHide, set_logsHide] = useState(false);
     const [myIp, set_myIp] = useState(null);
 
     useEffect(() => {
@@ -38,9 +39,9 @@ function Logs({serverurl}) {
             ...entry,
             uuid: window.crypto.randomUUID(),
         }
-        add_Log((prevState) => {
-          const newState = [entryWithId, ...prevState];
-          return newState;
+        set_Log((prevState) => {
+            const newState = [entryWithId, ...prevState];
+            return newState;
         });
     };
 
@@ -52,8 +53,24 @@ function Logs({serverurl}) {
 
     return (
         <div className="logs">
+            <div className="logs-buttons">
+                <input
+                    type="button"
+                    value="Clear"
+                    onClick={() => {
+                        set_Log([])
+                    }}
+                />
+                <input
+                    type="button"
+                    value={logsHide ? "Show" : "Hide"}
+                    onClick={() => {
+                        set_logsHide(prev => !prev)
+                    }}
+                />
+            </div>
             {
-                logs.map((log)=>
+                !logsHide && logs.map((log) =>
                     <Log
                         log={log}
                         myIp={myIp}
@@ -77,12 +94,13 @@ function Log(props) {
 
     return (
         <div className="log">
-            <span className="req">REQ >></span><br/>{' '}
+            <span className="req">REQ >></span><br />{' '}
             <span className="req">{'IP: '}</span><span className={`${props.myIp === ip ? `myIp` : ''}`}>{ip}</span>
             {' '}<span className="req">{'country: '}</span>{country}
-            {' '}<span className="req">{'city: '}</span>{city}
-            {' '}<span className="req">{'postal code: '}</span>{postalCode}<br/>
-            <span className="req">{'url: '}</span>{path}<br/>
+            {city && <>{' '}<span className="req">{'city: '}</span>{city}</>}
+            {postalCode && <>{' '}<span className="req">{'postal code: '}</span>{postalCode}</>}
+            <br />
+            <span className="req">{'url: '}</span>{path}<br />
             <span className="req">{'User Agent: '}</span>{uesrAgent}
         </div>
     );
