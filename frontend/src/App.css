@@ -4,12 +4,73 @@
   overflow: hidden;
 }
 
-.portfolio, .logs {
+.portfolio-container, .logs {
   width: calc(50% - 16px);
   flex-grow: 0;
   flex-shrink: 0;
 }
 
+.no-portfolio {
+  display: flex;
+  align-items: center;
+}
+
+.portfolio-table-container {
+  height: calc(100svh - 76px);
+  margin-bottom: 8px;
+}
+
+.portfolio-container img {
+  max-width: 100%;
+}
+
+.mtt-search-engine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.portfolio-present .mtt-search-engine {
+  align-items: flex-start;
+}
+
+.portfolio-present > .mtt-search-engine-container {
+  display: flex;
+  margin: 8px;
+  height: 51px;
+}
+
+@media only screen and (max-width: 1250px) {
+  .portfolio-present > .mtt-search-engine-container {
+    display: block;
+    overflow: hidden;
+  }
+  .portfolio-present > .mtt-search-engine-container {
+    height: 93px;
+  }
+  .portfolio-table-container {
+    height: calc(100svh - 118px);
+  }
+  .portfolio-table tbody {
+    max-height: calc(100svh - 155px);
+  }
+}
+
+.portfolio-present img {
+  max-width: 220px;
+  width: 100%;
+  object-fit: contain;
+  margin-right: 16px;
+}
+
+input[type='text'] {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+input[type='button'] {
+  margin-right: 4px;
+}
 
 .logs {
   overflow: auto;
@@ -21,6 +82,23 @@
 
 .logs > pre {
   text-wrap: pretty;
+}
+
+.portfolio-table {
+  width: calc(100% - 16px);
+  margin: 8px;
+  border: darkgray 1px solid;
+  height: 100%;
+}
+
+.portfolio-table tbody {
+  display: block;
+  overflow: auto;
+  max-height: calc(100svh - 114px);
+}
+
+.portfolio-table thead tr{
+  display: block;
 }
 
 .portfolio-table tr {
@@ -46,3 +124,4 @@ th.balance, td.balance {
   height: 24px;
   width: 24px;
 }
+
