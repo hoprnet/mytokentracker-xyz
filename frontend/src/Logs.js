@@ -53,16 +53,21 @@ function Logs({serverurl}) {
 function Log(props) {
     const ip = props.log.ip;
     const country = props.log.country;
-    console.log('props.log', props.log)
-   // const data = JSON.parse(props.log.data);
+    const path = props.log.log.path;
+    const uesrAgent = props.log.log.userAgent;
+    const city = props.log?.cf?.city;
+    const postalCode = props.log?.cf?.postalCode;
+
 
     return (
         <div className="log">
-            {ip}
-            {country}
-            {
-                JSON.stringify(props.log)
-            }
+            <span className="req">REQ >></span><br/>{' '}
+            <span className="req">{'IP: '}</span>{ip}
+            {' '}<span className="req">{'country: '}</span>{country}
+            {' '}<span className="req">{'city: '}</span>{city}
+            {' '}<span className="req">{'postal code: '}</span>{postalCode}<br/>
+            <span className="req">{'url: '}</span>{path}<br/>
+            <span className="req">{'User Agent: '}</span>{uesrAgent}
         </div>
     );
 }
