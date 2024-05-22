@@ -4,6 +4,8 @@ import humanFormat from "human-format";
 import Icon from "./Icon";
 import { Routing } from '@hoprnet/phttp-lib';
 import millify from "millify";
+import {Column, Table} from 'react-virtualized';
+import 'react-virtualized/styles.css';
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
@@ -842,17 +844,131 @@ function Portfolio({ serverurl }) {
     //     set_portfolio(x);
     // },[])
 
+
+    useEffect(()=>{
+        const x = [
+        {
+            "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+            "token": "WETH",
+            "balance": "4.7933949035k WETH"
+        },
+        {
+            "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "token": "Tether USD",
+            "balance": "0.0000289606 USDT"
+        },
+        {
+            "address": "0x5b52bfb8062ce664d74bbcd4cd6dc7df53fd7233",
+            "token": "ZENIQ",
+            "balance": "1.31358865 ZENIQ"
+        },
+        {
+            "address": "0x15d4c048f83bd7e37d49ea4c83a07267ec4203da",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0xe747fff1533bef9b6085b5d4955ba3aec2366fb3",
+            "token": "auroom.finance",
+            "balance": "0.0000 auroom.finance"
+        },
+        {
+            "address": "0xad3c09b81929201530c4c6223a38e919a619cc32",
+            "token": "NGP Energy",
+            "balance": "7.89996m NGPE"
+        },
+        {
+            "address": "0xb8366948b4a3f07bcbf14eb1739daa42a26b07c4",
+            "token": "VALOBIT",
+            "balance": "70 VBIT"
+        },
+        {
+            "address": "0xd1d2eb1b1e90b638588728b4130137d262c87cae",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0x115ec79f1de567ec68b7ae7eda501b406626478e",
+            "token": "Carry",
+            "balance": "0.005 CRE"
+        },
+        {
+            "address": "0xc5fb36dd2fb59d3b98deff88425a3f425ee469ed",
+            "token": "Dejitaru Tsuka",
+            "balance": "0.0000 TSUKA"
+        },
+        {
+            "address": "0x6226e00bcac68b0fe55583b90a1d727c14fab77f",
+            "token": "MultiVAC",
+            "balance": "1k MTV"
+        },
+        {
+            "address": "0x57b9d10157f66d8c00a815b5e289a152dedbe7ed",
+            "token": "环球股",
+            "balance": "0 HQG"
+        },
+        {
+            "address": "0xe627b9cda8398859f5f8d3f7e1cb48ec262aa4a6",
+            "token": "RektGAME",
+            "balance": "75.533 REKT"
+        },
+        {
+            "address": "0xb77993e94068292b79cb5fb59ab9a25c98bcd2b6",
+            "token": "PUMP ",
+            "balance": "5k PMP"
+        },
+        {
+            "address": "0x58b580c1d86c04a97d981e66fa64a73342864bdc",
+            "token": "Hedge Stable Finance",
+            "balance": "46 HDSF"
+        }
+    ]
+            set_portfolio(x);
+    },[])
+
+    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10,  lowercase: true }).replace(' ', '') || '-';
+
     async function getData() {
         set_portfolioLoading(true);
         try {
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
             const json = await rez.json();
-            let filtered = json;
+            let list = [];
+            console.log({
+                json
+            })
             if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
-                if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
-                else filtered.tokens = [];
-                set_portfolio(filtered);
-                console.log(filtered);
+                if (json && json.ETH && json.ETH.balance > 0) {
+                    list = [
+                        {
+                            address: '0x0',
+                            token: 'Ether',
+                            balance: `${formatBalance(json.ETH.rawBalance)} ETH`
+                        }
+                    ]
+                }
+                console.log({
+                    list
+                })
+                if (json.tokens) {
+                    let filtered = json.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
+                    let tmp = [];
+                    filtered = filtered.map(token=>{
+                        tmp.push(
+                            {
+                                address: token.tokenInfo.address,
+                                token: token.tokenInfo.name,
+                                balance: `${formatBalance(token.rawBalance)} ${token.tokenInfo.symbol}`
+                            }
+                        )
+                    })
+                    list = [...list, ...tmp]
+                }
+                console.log({
+                    list
+                })
+                set_portfolio(list);
+                console.log(list);
             } else {
                 set_portfolio(null)
             }
@@ -861,7 +977,11 @@ function Portfolio({ serverurl }) {
         }
     }
 
-    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10,  lowercase: true }).replace(' ', '') || '-';
+
+
+    const list = [
+        {name: 'Brian Vaughn', description: 'Software engineer'},
+    ];
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
@@ -910,6 +1030,22 @@ function Portfolio({ serverurl }) {
             </div>
             {
                 portfolio &&
+                <div className='portfolio-table-container'>
+                    <Table
+                        width={1000}
+                        height={300}
+                        headerHeight={20}
+                        rowHeight={30}
+                        rowCount={portfolio.length}
+                        rowGetter={({index}) => portfolio[index]}>
+                        <Column label="Icon" dataKey="address" width={100} />
+                        <Column label="Token" width={200} dataKey="token" />
+                        <Column label="Balance" width={200} dataKey="balance" />
+                    </Table>
+                </div>
+            }
+            {
+                false &&
                 <div className='portfolio-table-container'>
                     <table
                         className='portfolio-table'

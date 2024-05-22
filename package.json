@@ -9,7 +9,7 @@
     "types:check": "tsc",
     "start-local-ssl-proxy": "local-ssl-proxy --source 8788 --target 8787",
     "start-miniflare": "miniflare --live-reload",
-    "start": "react-scripts start",
+    "start": "cd frontend && react-scripts start",
     "start-https": "HTTPS=true yarn start",
     "build:frontend": "react-scripts build",
     "lint": "eslint --ext .jsx .",
