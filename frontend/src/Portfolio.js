@@ -7,9 +7,10 @@ import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
-const RPChToken = '9979a6246bf718649e9c22e72bf0412f1656c74d0d1ae953';
+const RPChToken = 'cd86943feac3b8ef534c792c0e2bbfdf73c05a26b0798d0d';
 
 const uHTTP = new Routing.Routing(RPChToken, {
+    discoveryPlatformEndpoint: 'https://discovery-platform.staging.hoprnet.link',
     forceZeroHop: true,
 });
 
