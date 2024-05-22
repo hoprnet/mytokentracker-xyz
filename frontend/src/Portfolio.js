@@ -5,6 +5,7 @@ import Icon from "./Icon";
 import { Routing } from '@hoprnet/phttp-lib';
 import millify from "millify";
 import {Column, Table} from 'react-virtualized';
+import AutoSizer from "react-virtualized-auto-sizer";
 import 'react-virtualized/styles.css';
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
@@ -921,6 +922,146 @@ function Portfolio({ serverurl }) {
             "address": "0x58b580c1d86c04a97d981e66fa64a73342864bdc",
             "token": "Hedge Stable Finance",
             "balance": "46 HDSF"
+        },
+        {
+            "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "token": "Tether USD",
+            "balance": "0.0000289606 USDT"
+        },
+        {
+            "address": "0x5b52bfb8062ce664d74bbcd4cd6dc7df53fd7233",
+            "token": "ZENIQ",
+            "balance": "1.31358865 ZENIQ"
+        },
+        {
+            "address": "0x15d4c048f83bd7e37d49ea4c83a07267ec4203da",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0xe747fff1533bef9b6085b5d4955ba3aec2366fb3",
+            "token": "auroom.finance",
+            "balance": "0.0000 auroom.finance"
+        },
+        {
+            "address": "0xad3c09b81929201530c4c6223a38e919a619cc32",
+            "token": "NGP Energy",
+            "balance": "7.89996m NGPE"
+        },
+        {
+            "address": "0xb8366948b4a3f07bcbf14eb1739daa42a26b07c4",
+            "token": "VALOBIT",
+            "balance": "70 VBIT"
+        },
+        {
+            "address": "0xd1d2eb1b1e90b638588728b4130137d262c87cae",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0x115ec79f1de567ec68b7ae7eda501b406626478e",
+            "token": "Carry",
+            "balance": "0.005 CRE"
+        },
+        {
+            "address": "0xc5fb36dd2fb59d3b98deff88425a3f425ee469ed",
+            "token": "Dejitaru Tsuka",
+            "balance": "0.0000 TSUKA"
+        },
+        {
+            "address": "0x6226e00bcac68b0fe55583b90a1d727c14fab77f",
+            "token": "MultiVAC",
+            "balance": "1k MTV"
+        },
+        {
+            "address": "0x57b9d10157f66d8c00a815b5e289a152dedbe7ed",
+            "token": "环球股",
+            "balance": "0 HQG"
+        },
+        {
+            "address": "0xe627b9cda8398859f5f8d3f7e1cb48ec262aa4a6",
+            "token": "RektGAME",
+            "balance": "75.533 REKT"
+        },
+        {
+            "address": "0xb77993e94068292b79cb5fb59ab9a25c98bcd2b6",
+            "token": "PUMP ",
+            "balance": "5k PMP"
+        },
+        {
+            "address": "0x58b580c1d86c04a97d981e66fa64a73342864bdc",
+            "token": "Hedge Stable Finance",
+            "balance": "46 HDSF"
+        },
+        {
+            "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "token": "Tether USD",
+            "balance": "0.0000289606 USDT"
+        },
+        {
+            "address": "0x5b52bfb8062ce664d74bbcd4cd6dc7df53fd7233",
+            "token": "ZENIQ",
+            "balance": "1.31358865 ZENIQ"
+        },
+        {
+            "address": "0x15d4c048f83bd7e37d49ea4c83a07267ec4203da",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0xe747fff1533bef9b6085b5d4955ba3aec2366fb3",
+            "token": "auroom.finance",
+            "balance": "0.0000 auroom.finance"
+        },
+        {
+            "address": "0xad3c09b81929201530c4c6223a38e919a619cc32",
+            "token": "NGP Energy",
+            "balance": "7.89996m NGPE"
+        },
+        {
+            "address": "0xb8366948b4a3f07bcbf14eb1739daa42a26b07c4",
+            "token": "VALOBIT",
+            "balance": "70 VBIT"
+        },
+        {
+            "address": "0xd1d2eb1b1e90b638588728b4130137d262c87cae",
+            "token": "Gala",
+            "balance": "0.00000107 GALA"
+        },
+        {
+            "address": "0x115ec79f1de567ec68b7ae7eda501b406626478e",
+            "token": "Carry",
+            "balance": "0.005 CRE"
+        },
+        {
+            "address": "0xc5fb36dd2fb59d3b98deff88425a3f425ee469ed",
+            "token": "Dejitaru Tsuka",
+            "balance": "0.0000 TSUKA"
+        },
+        {
+            "address": "0x6226e00bcac68b0fe55583b90a1d727c14fab77f",
+            "token": "MultiVAC",
+            "balance": "1k MTV"
+        },
+        {
+            "address": "0x57b9d10157f66d8c00a815b5e289a152dedbe7ed",
+            "token": "环球股",
+            "balance": "0 HQG"
+        },
+        {
+            "address": "0xe627b9cda8398859f5f8d3f7e1cb48ec262aa4a6",
+            "token": "RektGAME",
+            "balance": "75.533 REKT"
+        },
+        {
+            "address": "0xb77993e94068292b79cb5fb59ab9a25c98bcd2b6",
+            "token": "PUMP ",
+            "balance": "5k PMP"
+        },
+        {
+            "address": "0x58b580c1d86c04a97d981e66fa64a73342864bdc",
+            "token": "Hedge Stable Finance",
+            "balance": "46 HDSF"
         }
     ]
             set_portfolio(x);
@@ -1031,17 +1172,36 @@ function Portfolio({ serverurl }) {
             {
                 portfolio &&
                 <div className='portfolio-table-container'>
-                    <Table
+                    <AutoSizer>
+                        {({ height, width }) => (
+                        <Table
+                            width={width}
+                            height={height}
+                            headerHeight={20}
+                            rowHeight={30}
+                            rowCount={portfolio.length}
+                            rowGetter={({index}) => portfolio[index]}>
+                            <Column label="Icon" dataKey="address" width={100}>
+                                x
+                            </Column>
+                            <Column label="Token" width={200} dataKey="token" />
+                            <Column label="Balance" width={200} dataKey="balance" />
+                        </Table>
+                        )}
+                    </AutoSizer>
+                    {/* <Table
                         width={1000}
                         height={300}
                         headerHeight={20}
                         rowHeight={30}
                         rowCount={portfolio.length}
                         rowGetter={({index}) => portfolio[index]}>
-                        <Column label="Icon" dataKey="address" width={100} />
+                        <Column label="Icon" dataKey="address" width={100}>
+                            x
+                        </Column>
                         <Column label="Token" width={200} dataKey="token" />
                         <Column label="Balance" width={200} dataKey="balance" />
-                    </Table>
+                    </Table> */}
                 </div>
             }
             {
