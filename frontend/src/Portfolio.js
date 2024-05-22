@@ -847,16 +847,18 @@ function Portfolio({ serverurl }) {
     async function getData() {
         set_portfolioLoading(true);
         try {
-            const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
-            const json = await rez.json();
-            let filtered = json;
-            if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
-                if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
-                else filtered.tokens = [];
-                set_portfolio(filtered);
-                console.log(filtered);
-            } else {
-                set_portfolio(null)
+            if(ethAddress !== lastEthAddress) {
+                const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
+                const json = await rez.json();
+                let filtered = json;
+                if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
+                    if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
+                    else filtered.tokens = [];
+                    set_portfolio(filtered);
+                    console.log(filtered);
+                } else {
+                    set_portfolio(null)
+                }
             }
         } finally {
             set_portfolioLoading(false);
