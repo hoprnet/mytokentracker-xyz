@@ -20,6 +20,7 @@ function Portfolio({ serverurl }) {
     const [portfolio, set_portfolio] = useState(null);
     const [portfolioLoading, set_portfolioLoading] = useState(false);
     const [use_uHTTP, set_use_uHTTP] = useState(false);
+    const [iteration, set_iteration] = useState(0);
 
     // useEffect(()=>{
     //     const x = {
@@ -859,6 +860,7 @@ function Portfolio({ serverurl }) {
             }
         } finally {
             set_portfolioLoading(false);
+            set_iteration(num=>num+1)
         }
     }
 
@@ -946,7 +948,7 @@ function Portfolio({ serverurl }) {
                             {
                                 portfolio && portfolio.tokens && portfolio.tokens.map(token =>
                                     <tr
-                                        key={`${use_uHTTP}_${lastEthAddress}_${token?.tokenInfo?.address}`}
+                                        key={`${use_uHTTP}_${lastEthAddress}_${iteration}_${token?.tokenInfo?.address}`}
                                     >
                                         <td>
                                             <Icon
