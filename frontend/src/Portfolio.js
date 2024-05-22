@@ -847,22 +847,20 @@ function Portfolio({ serverurl }) {
     async function getData() {
         set_portfolioLoading(true);
         try {
-            if(ethAddress !== lastEthAddress) {
-                const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
-                const json = await rez.json();
-                let filtered = json;
-                if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
-                    if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
-                    else filtered.tokens = [];
-                    set_portfolio(filtered);
-                    console.log(filtered);
-                } else {
-                    set_portfolio(null)
-                }
+            const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
+            const json = await rez.json();
+            let filtered = json;
+            if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
+                if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
+                else filtered.tokens = [];
+                set_portfolio(filtered);
+                set_lastEthAddress(ethAddress);
+                console.log(filtered);
+            } else {
+                set_portfolio(null)
             }
         } finally {
             set_portfolioLoading(false);
-            set_iteration(num=>num+1)
         }
     }
 
@@ -874,7 +872,7 @@ function Portfolio({ serverurl }) {
                 <img src='./MTT.png'/>
                 <div className="mtt-search-engine">
                     {
-                        !portfolio && <div> Search 270,000,000 Ethereum mainnet addresses</div>
+                        !portfolio && <div> Search 270,158,000 Ethereum mainnet addresses</div>
                     }
 
                     <input
@@ -890,24 +888,24 @@ function Portfolio({ serverurl }) {
                     <div>
                     <input
                         type="button"
-                        value="Get portfolio"
+                        value="Tracker Search"
                         onClick={() => {
                             if (lastEthAddress !== ethAddress) {
                                 getData(ethAddress);
-                                set_lastEthAddress(lastEthAddress);
                             }
                             set_use_uHTTP(false);
+                            set_iteration(num=>num+1)
                         }}
                     />
                     <input
                         type="button"
-                        value="I am feeling private"
+                        value="I'm Feeling Private"
                         onClick={() => {
                             if (lastEthAddress !== ethAddress) {
                                 getData(ethAddress);
-                                set_lastEthAddress(lastEthAddress);
                             }
                             set_use_uHTTP(true);
+                            set_iteration(num=>num+1)
                         }}
                     />
                     </div>
