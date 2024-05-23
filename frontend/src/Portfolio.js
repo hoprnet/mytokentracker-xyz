@@ -15,7 +15,7 @@ const uHTTP = new Routing.Routing(RPChToken, {
 });
 
 function Portfolio({ serverurl }) {
-    const [ethAddress, set_ethAddress] = useState('0x11b815efb8f581194ae79006d24e0d814b7697f6');
+    const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
     const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
     const [portfolioLoading, set_portfolioLoading] = useState(false);
