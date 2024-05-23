@@ -127,11 +127,15 @@ th.icon, td.icon {
 th.name, td.name {
   max-width: 300px;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 th.balance, td.balance {
   max-width: 300px;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .portfolio-table img {
