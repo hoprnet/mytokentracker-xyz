@@ -919,9 +919,9 @@ function Portfolio({ serverurl }) {
                     >
                         <thead>
                             <tr>
-                                <th className="icon">Icon</th>
-                                <th className="name">Token</th>
-                                <th className="balance">Balance</th>
+                                <th className="icon icon-cell">Icon</th>
+                                <th className="name name-cell">Token</th>
+                                <th className="balance balance-cell">Balance</th>
                             </tr>
                         </thead>
 
@@ -950,7 +950,7 @@ function Portfolio({ serverurl }) {
                                     <tr
                                         key={`${use_uHTTP}_${lastEthAddress}_${iteration}_${token?.tokenInfo?.address}`}
                                     >
-                                        <td>
+                                        <td className="icon icon-cell" >
                                             <Icon
                                                 ethAddress={token?.tokenInfo?.address}
                                                 uHTTP={uHTTP}
@@ -958,8 +958,8 @@ function Portfolio({ serverurl }) {
                                                 serverurl={serverurl}
                                             />
                                         </td>
-                                        <td>{token?.tokenInfo?.name}</td>
-                                        <td>
+                                        <td className="name name-cell">{token?.tokenInfo?.name}</td>
+                                        <td className="balance balance-cell">
                                             {formatBalance(token?.rawBalance)}
                                             {` `}
                                             {token?.tokenInfo?.symbol}

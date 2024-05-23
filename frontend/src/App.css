@@ -125,12 +125,12 @@ th.icon, td.icon {
 }
 
 th.name, td.name {
-  width: 300px;
+  max-width: 300px;
   text-align: left;
 }
 
 th.balance, td.balance {
-  width: 300px;
+  max-width: 300px;
   text-align: left;
 }
 
