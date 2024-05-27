@@ -1,6 +1,6 @@
 {
   "name": "token-tracker-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A token asset tracker app.",
   "module": "./dist/index.mjs",
   "type": "module",
