@@ -9,10 +9,7 @@ const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
 const RPChToken = 'cd86943feac3b8ef534c792c0e2bbfdf73c05a26b0798d0d';
 
-const uHTTP = new Routing.Routing(RPChToken, {
-    discoveryPlatformEndpoint: 'https://discovery-platform.staging.hoprnet.link',
-    forceZeroHop: true,
-});
+const uHTTP = new Routing.Routing(RPChToken, { forceZeroHop: true });
 
 function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
