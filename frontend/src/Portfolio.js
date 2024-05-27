@@ -7,7 +7,7 @@ import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
-const RPChToken = 'cd86943feac3b8ef534c792c0e2bbfdf73c05a26b0798d0d';
+const RPChToken = 'ipE4I7B4D3nZ7Z4ZcFGkt9wt4mrZmb99IFbWaDGdT69Vriw3';
 
 const uHTTP = new Routing.Routing(RPChToken, { forceZeroHop: true });
 
