@@ -4,6 +4,8 @@ compatibility_date = "2023-07-01"
 send_metrics = false
 main = "server/index.ts"
 tsconfig = "tsconfig.json"
+# tracks changes on branch `prod`
+route = "backend.tokentracker.xyz"
 
 [durable_objects]
 bindings = [
@@ -16,3 +18,11 @@ new_classes = ["ClientLog"]
 
 [placement]
 mode = "smart"
+
+[env.stage]
+# tracks changes on branch `main`
+route = "staging.backend.tokentracker.xyz"
+
+[env.dev]
+# tracks latest changes in PRs
+route = "dev.backend.tokentracker.xyz"
