@@ -4,7 +4,7 @@ import Logs from './Logs'
 import Fingerprint from './Fingerprint';
 
 
-const serverurl = 'tokentracker.hoprnet.workers.dev' //'http://127.0.0.1:8787'
+const serverurl = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
   return (
