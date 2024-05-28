@@ -5,7 +5,7 @@ send_metrics = false
 main = "server/index.ts"
 tsconfig = "tsconfig.json"
 # tracks changes on branch `prod`
-route = "backend.tokentracker.xyz"
+route = "backend.mytokentracker.xyz"
 
 durable_objects.bindings = [
   { name = "client_logs", class_name = "ClientLog"}
@@ -20,7 +20,7 @@ mode = "smart"
 
 [env.stage]
 # tracks changes on branch `main`
-route = "staging.backend.tokentracker.xyz"
+route = "staging.backend.mytokentracker.xyz"
 
 durable_objects.bindings = [
   { name = "client_logs", class_name = "ClientLog"}
@@ -28,7 +28,7 @@ durable_objects.bindings = [
 
 [env.dev]
 # tracks latest changes in PRs
-route = "dev.backend.tokentracker.xyz"
+route = "dev.backend.mytokentracker.xyz"
 
 durable_objects.bindings = [
   { name = "client_logs", class_name = "ClientLog"}
