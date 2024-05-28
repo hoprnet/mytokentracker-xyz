@@ -173,3 +173,52 @@ th.balance, td.balance {
 .fingerprint > img {
   width: 74%;
 }
+
+
+
+@media only screen and (max-width: 900px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .portfolio-container, .logs {
+    width: 100%;
+  }
+  .portfolio-present > .mtt-search-engine-container {
+    height: 97px;
+  }
+  .App .mtt-search-engine-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .portfolio-present .mtt-search-engine {
+    align-items: center;
+  }
+  .mtt-search-engine input {
+    height: 24px;
+    font-size: 16px;
+  }
+  .portfolio-table-container{
+    margin: 0;
+    border: none;
+    height: calc( (100svh - 97px) / 2 );
+  }
+  .portfolio-table{
+    width: calc( 100% - 8px );
+    margin: 0;
+    margin-left: 8px;
+    border: none;
+    height: calc( (100svh - 97px) / 2 );
+  }
+  .portfolio-table tbody {
+    height: 100%;
+  }
+  .logs {
+    margin: 0;
+    flex-grow: 1;
+  }
+
+}
