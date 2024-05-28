@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { formatEther } from 'viem'
-import humanFormat from "human-format";
 import Icon from "./Icon";
 import { Routing } from '@hoprnet/phttp-lib';
 import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
-const RPChToken = 'ipE4I7B4D3nZ7Z4ZcFGkt9wt4mrZmb99IFbWaDGdT69Vriw3';
+let uHTTPOptions = {
+    forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
+}
 
-const uHTTP = new Routing.Routing(RPChToken, { forceZeroHop: true });
+if(process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
+
+const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
 
 function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
@@ -19,6 +22,7 @@ function Portfolio({ serverurl }) {
     const [use_uHTTP, set_use_uHTTP] = useState(false);
     const [iteration, set_iteration] = useState(0);
 
+    // Testing
     // useEffect(()=>{
     //     const x = {
     //         "address": "0x11b815efb8f581194ae79006d24e0d814b7697f6",
