@@ -6,7 +6,6 @@ export class ClientLog {
 
   async fetch(request: WorkerRequest) {
     const url = new URL(request.url);
-    console.log("URL in client_logs", url);
     if (url.pathname == "/websocket") {
       if (request.headers.get("Upgrade") != "websocket") {
         return new Response("expected websocket", { status: 400 });
@@ -38,7 +37,6 @@ export class ClientLog {
       });
     }
 
-    console.log("NOT FOUND 2", url.hostname, url.pathname);
     return new Response("Not found", { status: 404 });
   }
 
