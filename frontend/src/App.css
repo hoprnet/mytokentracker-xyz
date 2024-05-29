@@ -35,7 +35,8 @@ body {
 }
 
 .mtt-search-engine input[type="text"] {
-  width: 420px;
+  width: calc(100% - 32px);
+  max-width: 420px;
 }
 
 .portfolio-present .mtt-search-engine {
@@ -185,8 +186,17 @@ th.balance, td.balance {
 }
 
 
-
 @media only screen and (max-width: 900px) {
+  .portfolio-table-container{
+    font-size: 13px;
+  }
+  .logs {
+    font-size: 10.5px;
+  }
+}
+
+
+@media only screen and (max-width: 630px) {
   .App {
     display: flex;
     flex-direction: column;
@@ -240,13 +250,12 @@ th.balance, td.balance {
     border: none;
     margin: 0;
     flex-grow: 1;
-    font-size: 10.5px;
   }
 
 }
 
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 630px) {
   .mtt-search-engine input[type="text"] {
     width: calc(100svw - 32px);
   }
