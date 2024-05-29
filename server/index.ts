@@ -15,7 +15,9 @@ export async function handleRequest(
   env: Env,
   ctx: ExecutionContext,
 ): Promise<Response> {
+  console.log("URL",  request.url);
   const url = new URL(request.url);
+  console.log("NEW URL",  url);
 
   // redirect to secure connections, unless on localhost (for testing)
   if (url.hostname != "localhost" && url.hostname != "127.0.0.1") {
@@ -63,12 +65,13 @@ export async function handleRequest(
     return new Response("Not found", { status: 404 });
   }
 
-  if (path[0] == "client_logs") {
+  if (path[0] == "clientlogs") {
     const strippedUrl = new URL(request.url);
     strippedUrl.pathname = "/" + path.slice(1).join("/");
     return logsObject.fetch(strippedUrl, request);
   }
 
+  console.log("NOT FOUND 1", url.hostname, url.pathname, path);
   return new Response("Not found", { status: 404 });
 }
 

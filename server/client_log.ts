@@ -37,6 +37,7 @@ export class ClientLog {
       });
     }
 
+    console.log("NOT FOUND 2", url.hostname, url.pathname);
     return new Response("Not found", { status: 404 });
   }
 
