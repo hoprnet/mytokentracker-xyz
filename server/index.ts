@@ -62,7 +62,8 @@ export async function handleRequest(
       await logsObject.fetch(url, request.clone());
       return fetchLogo(tokenLogoUrl, request);
     }
-    return new Response("Not found", { status: 404 });
+  console.log("NOT FOUND 0", url.hostname, url.pathname, path);
+  return new Response("Not found", { status: 404 });
   }
 
   if (path[0] == "clientlogs") {
