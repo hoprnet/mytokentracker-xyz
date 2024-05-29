@@ -1,3 +1,7 @@
+body {
+  min-width: 300px;
+}
+
 .App {
   display: flex;
   height: 100svh;
@@ -20,7 +24,7 @@
   margin-bottom: 8px;
 }
 
-.portfolio-container img {
+.portfolio-container img.mtt-img {
   max-width: 100%;
 }
 
@@ -28,6 +32,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.mtt-search-engine input[type="text"] {
+  width: 420px;
 }
 
 .portfolio-present .mtt-search-engine {
@@ -56,7 +64,7 @@
   }
 }
 
-.portfolio-present img {
+.portfolio-present img.mtt-img {
   max-width: 220px;
   width: 100%;
   object-fit: contain;
@@ -126,6 +134,7 @@ th.icon, td.icon {
 
 th.name, td.name {
   max-width: 300px;
+  width: 300px;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -133,6 +142,7 @@ th.name, td.name {
 
 th.balance, td.balance {
   max-width: 300px;
+  width: 300px;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -172,4 +182,78 @@ th.balance, td.balance {
 
 .fingerprint > img {
   width: 74%;
+}
+
+
+
+@media only screen and (max-width: 900px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .portfolio-container, .logs {
+    width: 100%;
+    height: calc(100svh / 2);
+  }
+  .portfolio-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .portfolio-present > .mtt-search-engine-container {
+    flex-shrink: 0;
+    height: 97px;
+  }
+  .App .mtt-search-engine-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .portfolio-container.no-portfolio img.mtt-img {
+    margin-top: 16svh;
+  }
+  .portfolio-present .mtt-search-engine {
+    align-items: center;
+  }
+  .mtt-search-engine input[type="button"] {
+    height: 24px;
+    font-size: 16px;
+  }
+  .portfolio-table-container{
+    margin: 0;
+    border: none;
+    font-size: 13px;
+  }
+  .portfolio-table{
+    width: calc( 100% - 8px );
+    margin: 0;
+    margin-left: 8px;
+    border: none;
+  }
+  .portfolio-table tbody {
+    height: 100%;
+  }
+  .logs {
+    padding: 8px 0 0 8px;
+    width: calc(100% - 8px);
+    border: none;
+    margin: 0;
+    flex-grow: 1;
+    font-size: 10.5px;
+  }
+
+}
+
+
+@media only screen and (max-width: 480px) {
+  .mtt-search-engine input[type="text"] {
+    width: calc(100svw - 32px);
+  }
+}
+
+@media only screen and (max-width: 300px) {
+  .mtt-search-engine input[type="text"] {
+    width: calc(300px - 32px);
+  }
 }
