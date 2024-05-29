@@ -870,7 +870,7 @@ function Portfolio({ serverurl }) {
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
             <div className="mtt-search-engine-container">
-                <img src='./MTT.png'/>
+                <img className="mtt-img" src='./MTT.png'/>
                 <div className="mtt-search-engine">
                     {
                         !portfolio && <div> Search 270,158,000 Ethereum mainnet addresses</div>
@@ -882,7 +882,6 @@ function Portfolio({ serverurl }) {
                         name="address"
                         required
                         minLength="4"
-                        size="50"
                         value={ethAddress}
                         onChange={(event) => { set_ethAddress(event.target.value) }}
                     />
