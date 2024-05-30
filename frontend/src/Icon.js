@@ -19,11 +19,9 @@ function Icon(props) {
         set_ethAddress(ethAddress);
         try {
             const rez = await fetch(`https://${props.serverurl}/logo/${ethAddress}`, { cache: "no-store" })
-            const base64 = await rez.text();
-            if(base64 && base64.includes('base64')) {
-                console.log('Got icon', ethAddress, base64);
-                set_icon(base64);
-            }
+            const blob = await rez.blob();
+            const icon = URL.createObjectURL(blob);
+            set_icon(icon);
         } catch (e) {
             console.warn(`No icon for ${ethAddress}`, e)
         }
@@ -32,20 +30,12 @@ function Icon(props) {
     async function getIcon_uHTTP(ethAddress) {
         set_ethAddress(ethAddress);
         try {
-            props.uHTTP
-            .fetch(`https://${props.serverurl}/logo/${ethAddress}`)
-            .then(async (resp) => {
-                const base64 = resp.text;
-                if(base64 && base64.includes('base64')) {
-                    console.log('Got icon through uHTTP', ethAddress, base64);
-                    set_icon(base64);
-                }
-            })
-            .catch((err) => {
-                console.error('uHTTP error:', err);
-            });
+            const rez = await props.uHTTP.fetch(`https://${props.serverurl}/logo/${ethAddress}`)
+            const blob = await rez.blob();
+            const icon = URL.createObjectURL(blob);
+            set_icon(icon);
         } catch (e) {
-            console.warn(`No icon for ${ethAddress}`, e)
+            console.warn(`[uHTTP] No icon for ${ethAddress}`, e)
         }
     }
 
