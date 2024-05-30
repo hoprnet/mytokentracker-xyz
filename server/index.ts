@@ -74,7 +74,9 @@ export async function handleRequest(
 
 async function fetchLogo(url: string, request: WorkerRequest) {
   return fetch(url, request).then(async function (response) {
-    return response;
+      const headers = new Headers(response.headers);
+      headers.set('Access-Control-Allow-Origin', '*');
+      return new Response(response.body, { headers });
   });
 }
 
