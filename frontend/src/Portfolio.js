@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { formatEther } from 'viem'
 import Icon from "./Icon";
-import { Routing } from '@hoprnet/phttp-lib';
+import { Routing } from '@hoprnet/uhttp-lib';
 import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
