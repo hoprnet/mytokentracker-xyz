@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { formatEther } from 'viem'
 import Icon from "./Icon";
-import { Routing } from '@hoprnet/phttp-lib';
+import { Routing } from '@hoprnet/uhttp-lib';
 import millify from "millify";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
 let uHTTPOptions = {
     forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
+    clientAssociatedExitNodes: process.env.REACT_APP_uHTTP_CLIENT_ASSOCIATED ? JSON.parse(process.env.REACT_APP_uHTTP_CLIENT_ASSOCIATED) : false,
 }
 
 if(process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
