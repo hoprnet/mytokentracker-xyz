@@ -13,7 +13,7 @@ let uHTTPOptions = {
 
 if(process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
 
-const uHTTP = new Routing.Client(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);Client
+const uHTTP = new Routing.Client(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
 
 function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
