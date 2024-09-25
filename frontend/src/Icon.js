@@ -32,8 +32,10 @@ function Icon(props) {
         try {
             const rez = await props.uHTTP.fetch(`https://${props.serverurl}/logo/${ethAddress}`)
             const blob = await rez.blob();
-            const icon = URL.createObjectURL(blob);
-            set_icon(icon);
+            if(blob.type.includes('image')){
+                const icon = URL.createObjectURL(blob);
+                set_icon(icon);
+            }
         } catch (e) {
             console.warn(`[uHTTP] No icon for ${ethAddress}`, e)
         }
