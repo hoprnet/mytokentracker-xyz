@@ -1,7 +1,8 @@
 import './App.css';
+import React from "react";
 import Portfolio from './Portfolio';
 import Logs from './Logs'
-import Fingerprint from './Fingerprint';
+const Fingerprint = React.lazy(() => import('./Fingerprint'));
 
 
 const serverurl = process.env.REACT_APP_BACKEND_URL;

@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatEther } from 'viem'
 import Icon from "./Icon";
 import { Routing } from '@hoprnet/phttp-lib';
 import millify from "millify";
+import { uuidv4 } from "./functions";
+import { db } from "./db.js";
+import { getTokenBalances } from "./functions";
 
 const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
 
@@ -10,9 +13,15 @@ let uHTTPOptions = {
     forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
 }
 
-if(process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
+if (process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
 
 const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
+
+/* - RPC rescue - */
+const addressLength = db.tokenArr.length;
+const balancesPerCall = 50;
+const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
+/* - RPC rescue - */
 
 function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
@@ -21,6 +30,10 @@ function Portfolio({ serverurl }) {
     const [portfolioLoading, set_portfolioLoading] = useState(false);
     const [use_uHTTP, set_use_uHTTP] = useState(false);
     const [iteration, set_iteration] = useState(0);
+
+    useEffect(() => {
+        db.rpcs.shuffle();
+    }, []);
 
     // Testing
     // useEffect(()=>{
@@ -847,33 +860,105 @@ function Portfolio({ serverurl }) {
 
     async function getData() {
         set_portfolioLoading(true);
+
         try {
-            const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`)
-            const json = await rez.json();
-            let filtered = json;
-            if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
-                if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
-                else filtered.tokens = [];
-                set_portfolio(filtered);
-                set_lastEthAddress(ethAddress);
-                console.log(filtered);
-            } else {
-                set_portfolio(null)
+            throw new Error('Test error');
+            const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`);
+            if (rez.ok) {
+                const json = await rez.json();
+                let filtered = json;
+                if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
+                    if (filtered.tokens) filtered.tokens = filtered.tokens.filter(token => !(token?.tokenInfo?.symbol && notRealTokenRegEx.test(token?.tokenInfo?.symbol)));
+                    else filtered.tokens = [];
+                    set_portfolio(filtered);
+                    set_lastEthAddress(ethAddress);
+                    console.log(filtered);
+                } else {
+                    set_portfolio(null)
+                }
+
+                return;
             }
-        } finally {
-            set_portfolioLoading(false);
+        } catch (error) {
+            console.error('Error fetching data using ethplorer:', error);
+        }
+
+        /* - RPC rescue - */
+        let jobs = [];
+        for (let i = 0; i < numberOfCalls; i++) {
+            const startIndex = i * balancesPerCall;
+            const endIndex = Math.min(startIndex + balancesPerCall, addressLength);
+            const tokenAddresses = db.tokenArr.slice(startIndex, endIndex);
+            jobs.push(getTokenBalancesWrapper(ethAddress, tokenAddresses));
+        }
+        console.log('Jobs:', jobs);
+        try {
+            await Promise.all(jobs);
+        } catch (error) {
+            console.error('Error fetching data using RPC endpoints:', error);
+        }
+
+        set_portfolioLoading(false);
+    }
+
+    async function getTokenBalancesWrapper(address, coins) {
+        for (let i = 0; i < db.rpcs.length; i++) {
+            const rpcUrl = db.rpcs[i];
+            const tokenBalances = await getTokenBalances(address, coins, rpcUrl);
+            if (!tokenBalances) {
+                console.log(`Error with RPC ${rpcUrl}, trying next one...`);
+                db.rpcs.moveFirstToEnd();
+                continue;
+            }
+
+            console.log(`${rpcUrl}:`, tokenBalances);
+
+            const tokensWithBalances = Object.keys(tokenBalances);
+            const tokensWithBalancesParsed = tokensWithBalances.map(token => {return {
+                tokenInfo: {
+                    address: token,
+                    name: db.tokens[token]?.name || 'Unknown',
+                    decimals: db.tokens[token]?.decimals || 18,
+                    symbol: db.tokens[token]?.symbol || '',
+                },
+                rawBalance: tokenBalances[token],
+            }})
+
+            set_portfolio(old => {
+                if (old === null) {
+                    return {
+                        ETH: {
+                            rawBalance: "0"
+                        },
+                        tokens: tokensWithBalancesParsed
+                    }
+                }
+
+                return {
+                    ...old,
+                    tokens: [
+                        ...(old.tokens || []),
+                        ...(tokensWithBalancesParsed || []),
+                    ]
+                }
+            });
+
+            return;
         }
     }
 
-    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10,  lowercase: true }).replace(' ', '') || '-';
+    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10, lowercase: true }).replace(' ', '') || '-';
+
+    const roundTo = 10000;
+    const numberOfAddresses = (Math.floor(db.uniqueAddresses.uniqueAddresses / roundTo) * roundTo).toLocaleString('en-US', { maximumFractionDigits: 10 });
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
             <div className="mtt-search-engine-container">
-                <img className="mtt-img" src='./MTT.png'/>
+                <img className="mtt-img" src='./MTT.png' />
                 <div className="mtt-search-engine">
                     {
-                        !portfolio && <div> Search 270,158,000 Ethereum mainnet addresses</div>
+                        !portfolio && <div> Search over {db.tokenArr.length} {numberOfAddresses} Ethereum mainnet addresses</div>
                     }
 
                     <input
@@ -886,28 +971,28 @@ function Portfolio({ serverurl }) {
                         onChange={(event) => { set_ethAddress(event.target.value) }}
                     />
                     <div>
-                    <input
-                        type="button"
-                        value="Tracker Search"
-                        onClick={() => {
-                            if (lastEthAddress !== ethAddress) {
-                                getData(ethAddress);
-                            }
-                            set_use_uHTTP(false);
-                            set_iteration(num=>num+1)
-                        }}
-                    />
-                    <input
-                        type="button"
-                        value="I'm Feeling Private"
-                        onClick={() => {
-                            if (lastEthAddress !== ethAddress) {
-                                getData(ethAddress);
-                            }
-                            set_use_uHTTP(true);
-                            set_iteration(num=>num+1)
-                        }}
-                    />
+                        <input
+                            type="button"
+                            value="Tracker Search"
+                            onClick={() => {
+                                if (lastEthAddress !== ethAddress) {
+                                    getData(ethAddress);
+                                }
+                                set_use_uHTTP(false);
+                                set_iteration(num => num + 1)
+                            }}
+                        />
+                        <input
+                            type="button"
+                            value="I'm Feeling Private"
+                            onClick={() => {
+                                if (lastEthAddress !== ethAddress) {
+                                    getData(ethAddress);
+                                }
+                                set_use_uHTTP(true);
+                                set_iteration(num => num + 1)
+                            }}
+                        />
                     </div>
                 </div>
             </div>
@@ -927,7 +1012,7 @@ function Portfolio({ serverurl }) {
 
                         <tbody>
                             {
-                                portfolio &&
+                                portfolio && portfolio?.ETH?.rawBalance !== '0' &&
                                 <tr>
                                     <td className="icon">
                                         <Icon
