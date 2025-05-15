@@ -43,7 +43,9 @@ function mergeDataForFrontend() {
         mergedData.tokenArr.push(token.address);
     });
     mergedData.tokens = parsedTokensData;
-    mergedData.tokenArr = mergedData.tokenArr.sort((a, b) => {
+    mergedData.tokenArr = mergedData.tokenArr.filter(function(item, pos) {
+        return mergedData.tokenArr.indexOf(item) == pos;
+    }).sort((a, b) => {
         return mergedData.tokens[b].market_cap - mergedData.tokens[a].market_cap;
     });
 

@@ -30,46 +30,6 @@ Array.prototype.moveFirstToEnd = function () {
     return this; // Return the modified array
 };
 
-
-
-//getData2();
-async function getData2() {
-    db.rpcs.shuffle();
-    const ethAddress = '0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C';
-    const addressLength = db.tokenArr.length;
-    const balancesPerCall = 100;
-    const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
-    const walletAddress = '0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C';
-    let results = {};
-    for (let i = 0; i < numberOfCalls; i++) {
-        console.log(`Fetching balances for tokens ${i * balancesPerCall} to ${Math.min((i + 1) * balancesPerCall, addressLength)}...`);
-        const startIndex = i * balancesPerCall;
-        const endIndex = Math.min(startIndex + balancesPerCall, addressLength);
-        const tokenAddresses = db.tokenArr.slice(startIndex, endIndex);
-        const temp = await getTokenBalancesWrapper(walletAddress, tokenAddresses);
-        results = { ...results, ...temp };
-    }
-    console.log('All balances:', results);
-}
-
-async function getTokenBalancesWrapper(address, coins) {
-    for(let i = 0; i < db.rpcs.length; i++) {
-        const rpcUrl = db.rpcs[i];
-        const rez = await getTokenBalances(address, coins, rpcUrl);
-        if(!rez) {
-            console.log(`Error with RPC ${rpcUrl}, trying next one...`);
-            db.rpcs.moveFirstToEnd();
-            continue;
-        } else {
-            console.log(`${rpcUrl}:`, rez);
-        }
-        return rez;
-    }
-}
-
-
-
-
 //getTokenBalances()
 export async function getTokenBalances(address, coins, rpcUrl) {
     try{
@@ -123,14 +83,14 @@ export async function getTokenBalances(address, coins, rpcUrl) {
 
         let results = { }
 
-        console.log('Balances:', balances);
+    //    console.log('Balances:', balances);
         balances.forEach((balance, index) => {
             if(balance && balance !== '0') results[coins[index]] = balance;
         })
 
         return results;
     } catch (error) {
-        console.warn('Error with RPC:', rpcUrl, error);
+    //    console.warn('Error with RPC:', rpcUrl, error);
         return null
     }
 }
