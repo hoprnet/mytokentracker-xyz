@@ -18,7 +18,8 @@ if (process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpo
 const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
 
 /* - RPC rescue - */
-const addressLength = db.tokenArr.length;
+db.tokenArr.unshift('0x0'); //adding 0x0 to the beginning of the array to get ETH balance
+const addressLength = db.tokenArr.length; //adding 1 to account for ETH balance
 const balancesPerCall = 100;
 const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
 /* - RPC rescue - */
@@ -49,8 +50,9 @@ function Portfolio({ serverurl }) {
     async function getData() {
         set_portfolioLoading(true);
 
+        /* - Centralized main endpoint - */
         try {
-            throw new Error('Test error');
+
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`);
             if (rez.ok) {
                 const json = await rez.json();
@@ -91,15 +93,20 @@ function Portfolio({ serverurl }) {
         set_portfolioLoading(false);
     }
 
-    async function getTokenBalancesWrapper(address, coins) {
+    async function getTokenBalancesWrapper(address, tokenAddresses) {
         for (let i = 0; i < db.rpcs.length; i++) {
             const rpcUrl = db.rpcs[i];
             db.rpcs.moveFirstToEnd();
-            const tokenBalances = await getTokenBalances(address, coins, rpcUrl);
+            const tokenBalances = await getTokenBalances(rpcUrl, address, tokenAddresses);
             if (!tokenBalances) {
             //    console.log(`Error with RPC ${rpcUrl}, trying next one...`);
                 db.rpcs.moveFirstToEnd();
                 continue;
+            }
+
+            if (tokenBalances['0x0'] !== undefined) {
+                set_etherBalance(tokenBalances['0x0']);
+                delete tokenBalances['0x0'];
             }
 
             console.log(`tokenBalances ${rpcUrl}:`, tokenBalances);

@@ -30,8 +30,9 @@ Array.prototype.moveFirstToEnd = function () {
     return this; // Return the modified array
 };
 
-//getTokenBalances()
-export async function getTokenBalances(address, coins, rpcUrl) {
+//getTokenBalances('https://rpc.ankr.com/eth/3247f52cb3112895f6f03c53f10eb15264a64a53200fee12e856f0cf2ee1183e', '0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C', ['0x0'])
+
+export async function getTokenBalances(rpcUrl, address, coins) {
     try{
         const balanceOfMethod = '0x70a08231'; // Keccak-256 hash of "balanceOf(address)" method
 
@@ -44,8 +45,18 @@ export async function getTokenBalances(address, coins, rpcUrl) {
 
         for (let i = 0; i < coins.length; i++) {
             const contract = coins[i];
-            const data = createData(contract, address);
-            params.push(data);
+            if (contract === '0x0') {
+                const multicall3 = "0xcA11bde05977b3631167028862bE2a173976CA11";
+                const getEthBalanceSelector = "0x4d2301cc"; // getEthBalance(address) in Multicall3
+                const data = getEthBalanceSelector + address.slice(2).padStart(64, "0");
+                params.push({
+                    to: multicall3,
+                    data: data
+                });
+            } else {
+                const data = createData(contract, address);
+                params.push(data);
+            }
         }
 
         const requests = params.map((param, index) => ({
