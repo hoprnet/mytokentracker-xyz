@@ -30,6 +30,7 @@ function Portfolio({ serverurl }) {
     const [etherBalance, set_etherBalance] = useState(null);
     const [portfolioLoading, set_portfolioLoading] = useState(false);
     const [use_uHTTP, set_use_uHTTP] = useState(false);
+    const [reloadIcons, set_reloadIcons] = useState(false);
     const [iteration, set_iteration] = useState(0);
 
     useEffect(() => {
@@ -93,6 +94,7 @@ function Portfolio({ serverurl }) {
     async function getTokenBalancesWrapper(address, coins) {
         for (let i = 0; i < db.rpcs.length; i++) {
             const rpcUrl = db.rpcs[i];
+            db.rpcs.moveFirstToEnd();
             const tokenBalances = await getTokenBalances(address, coins, rpcUrl);
             if (!tokenBalances) {
             //    console.log(`Error with RPC ${rpcUrl}, trying next one...`);
