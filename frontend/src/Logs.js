@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+const serverurl = process.env.REACT_APP_BACKEND_URL;
 
-function Logs({ serverurl }) {
+function Logs() {
     const [logs, set_Log] = useState([]);
     const [logsHide, set_logsHide] = useState(false);
     const [myIp, set_myIp] = useState(null);

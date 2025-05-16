@@ -1,21 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { formatEther } from 'viem'
 import Icon from "./Icon";
-import { Routing } from '@hoprnet/phttp-lib';
 import millify from "millify";
-import { uuidv4 } from "./functions";
 import { db } from "./db.js";
 import { getTokenBalances } from "./functions";
-
-const notRealTokenRegEx = /visit|www|http|.com|.org|claim/gi;
-
-let uHTTPOptions = {
-    forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
-}
-
-if (process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
-
-const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
+import { getIcon, getIcon_uHTTP } from "./functions";
 
 /* - RPC rescue - */
 db.tokenArr.unshift('0x0'); //adding 0x0 to the beginning of the array to get ETH balance
@@ -33,6 +22,8 @@ function Portfolio({ serverurl }) {
     const [use_uHTTP, set_use_uHTTP] = useState(false);
     const [reloadIcons, set_reloadIcons] = useState(false);
     const [iteration, set_iteration] = useState(0);
+    const [downloadedIcons, set_downloadedIcons] = useState({});
+    const inProgress = useRef(new Set());
 
     useEffect(() => {
         db.rpcs.shuffle();
@@ -40,19 +31,46 @@ function Portfolio({ serverurl }) {
 
     useEffect(() => {
         console.log('Portfolio:', portfolio);
+        getIconWrapper(portfolio, downloadedIcons);
     }, [portfolio]);
+
+    const getIconWrapper = async (portfolio, downloadedIcons) => {
+        if (portfolio === null) return;
+        const tokenAddresses = Object.keys(portfolio);
+        console.log('Portfolio:', portfolio);
+        console.log('tokenAddresses:', tokenAddresses);
+        for (const tokenAddress of tokenAddresses) {
+            if (!db.tokenArr.includes(tokenAddress)) continue;
+            if (inProgress.current.has(tokenAddress)) continue;
+            inProgress.current.add(tokenAddress); // Mark as in-progress
+
+            console.log('Getting icon for:', tokenAddress);
+            const icon = await getIcon(tokenAddress);
+            if (icon) {
+                set_downloadedIcons(old => {
+                    return {
+                        ...old,
+                        [tokenAddress]: icon
+                    }
+                })
+            }
+        }
+    }
 
     const clearData = () => {
         set_portfolio(null);
         set_etherBalance(null);
     }
 
-    async function getData() {
+    async function getData(ethAddress, uHTTP = false) {
+        clearData();
         set_portfolioLoading(true);
+        set_iteration(num => num + 1);
+        set_downloadedIcons({});
 
         /* - Centralized main endpoint - */
         try {
-
+           // throw new Error('Test error');
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`);
             if (rez.ok) {
                 const json = await rez.json();
@@ -65,8 +83,6 @@ function Portfolio({ serverurl }) {
                     })
                     console.log(balances);
                     set_portfolio(balances);
-                } else {
-                    clearData();
                 }
                 set_portfolioLoading(false);
                 return;
@@ -81,7 +97,7 @@ function Portfolio({ serverurl }) {
             const startIndex = i * balancesPerCall;
             const endIndex = Math.min(startIndex + balancesPerCall, addressLength);
             const tokenAddresses = db.tokenArr.slice(startIndex, endIndex);
-            jobs.push(getTokenBalancesWrapper(ethAddress, tokenAddresses));
+            jobs.push(getTokenBalancesWrapper(ethAddress, tokenAddresses, uHTTP));
         }
         console.log('Jobs:', jobs);
         try {
@@ -93,20 +109,15 @@ function Portfolio({ serverurl }) {
         set_portfolioLoading(false);
     }
 
-    async function getTokenBalancesWrapper(address, tokenAddresses) {
+    async function getTokenBalancesWrapper(address, tokenAddresses, uHTTP) {
         for (let i = 0; i < db.rpcs.length; i++) {
             const rpcUrl = db.rpcs[i];
             db.rpcs.moveFirstToEnd();
             const tokenBalances = await getTokenBalances(rpcUrl, address, tokenAddresses);
             if (!tokenBalances) {
-            //    console.log(`Error with RPC ${rpcUrl}, trying next one...`);
+                //    console.log(`Error with RPC ${rpcUrl}, trying next one...`);
                 db.rpcs.moveFirstToEnd();
                 continue;
-            }
-
-            if (tokenBalances['0x0'] !== undefined) {
-                set_etherBalance(tokenBalances['0x0']);
-                delete tokenBalances['0x0'];
             }
 
             console.log(`tokenBalances ${rpcUrl}:`, tokenBalances);
@@ -157,8 +168,6 @@ function Portfolio({ serverurl }) {
                                 if (lastEthAddress !== ethAddress) {
                                     getData(ethAddress);
                                 }
-                                set_use_uHTTP(false);
-                                set_iteration(num => num + 1)
                             }}
                         />
                         <input
@@ -166,10 +175,8 @@ function Portfolio({ serverurl }) {
                             value="I'm Feeling Private"
                             onClick={() => {
                                 if (lastEthAddress !== ethAddress) {
-                                    getData(ethAddress);
+                                    getData(ethAddress, true);
                                 }
-                                set_use_uHTTP(true);
-                                set_iteration(num => num + 1)
                             }}
                         />
                     </div>
@@ -195,10 +202,7 @@ function Portfolio({ serverurl }) {
                                 <tr>
                                     <td className="icon">
                                         <Icon
-                                            ethAddress={'0x0'}
-                                            uHTTP={uHTTP}
-                                            use_uHTTP={use_uHTTP}
-                                            serverurl={serverurl}
+                                            icon={downloadedIcons['0x0']}
                                         />
                                     </td>
                                     <td className="name">Ether</td>
@@ -218,10 +222,7 @@ function Portfolio({ serverurl }) {
                                         >
                                             <td className="icon icon-cell" >
                                                 <Icon
-                                                    ethAddress={tokenAddress}
-                                                    uHTTP={uHTTP}
-                                                    use_uHTTP={use_uHTTP}
-                                                    serverurl={serverurl}
+                                                    icon={downloadedIcons[tokenAddress]}
                                                 />
                                             </td>
                                             <td className="name name-cell">{db.tokens[tokenAddress].name}</td>
@@ -232,7 +233,7 @@ function Portfolio({ serverurl }) {
                                             </td>
                                         </tr>
                                     )
-                                    }
+                                }
                                 )
                             }
                         </tbody>

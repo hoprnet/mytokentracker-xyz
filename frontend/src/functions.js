@@ -1,4 +1,12 @@
+import { Routing } from '@hoprnet/phttp-lib';
 import { db } from "./db.js";
+
+const serverurl = process.env.REACT_APP_BACKEND_URL;
+let uHTTPOptions = {
+    forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
+}
+if (process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
+const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
 
 export function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -30,7 +38,7 @@ Array.prototype.moveFirstToEnd = function () {
     return this; // Return the modified array
 };
 
-//getTokenBalances('https://rpc.ankr.com/eth/3247f52cb3112895f6f03c53f10eb15264a64a53200fee12e856f0cf2ee1183e', '0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C', ['0x0'])
+//getTokenBalances('https://rpc.ankr.com/eth/1247f52cb3112895f6f03c53f10eb15264a64a53200fee12e856f0cf2ee1183e', '0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C', ['0x0'])
 
 export async function getTokenBalances(rpcUrl, address, coins) {
     try{
@@ -103,5 +111,29 @@ export async function getTokenBalances(rpcUrl, address, coins) {
     } catch (error) {
     //    console.warn('Error with RPC:', rpcUrl, error);
         return null
+    }
+}
+
+export async function getIcon(ethAddress) {
+    try {
+        const rez = await fetch(`https://${serverurl}/logo/${ethAddress}`, { cache: "no-store" })
+        const blob = await rez.blob();
+        const icon = URL.createObjectURL(blob);
+        return icon;
+    } catch (e) {
+        console.warn(`No icon for ${ethAddress}`, e)
+    }
+}
+
+export async function getIcon_uHTTP(ethAddress) {
+    try {
+        const rez = await uHTTP.fetch(`https://${serverurl}/logo/${ethAddress}`)
+        const blob = await rez.blob();
+        if(blob.type.includes('image')){
+            const icon = URL.createObjectURL(blob);
+            return icon;
+        }
+    } catch (e) {
+        console.warn(`[uHTTP] No icon for ${ethAddress}`, e)
     }
 }
