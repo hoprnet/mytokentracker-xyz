@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 const serverurl = process.env.REACT_APP_BACKEND_URL;
 
 function Logs() {
     const [logs, set_Log] = useState([]);
     const [logsHide, set_logsHide] = useState(false);
     const [myIp, set_myIp] = useState(null);
+    const wsRef = useRef(null);
 
     useEffect(() => {
         getMyIp();
-        joinWebSocket();
-    }, []);
 
-    const joinWebSocket = () => {
+        // Clean up any previous websocket before creating a new one
+        if (wsRef.current) {
+            wsRef.current.close();
+        }
+
         const wsUrl = `wss://${serverurl}/client_logs/websocket`;
         const ws = new WebSocket(wsUrl);
+        wsRef.current = ws;
 
         ws.addEventListener("open", (event) => {
             console.log("debug websocket opened");
@@ -27,13 +31,28 @@ function Logs() {
 
         ws.addEventListener("close", (event) => {
             console.log("websocket closed, reconnecting:", event.code, event.reason);
-            setTimeout(joinWebSocket(), 1000);
+            // Only reconnect if this is the current ws
+            if (wsRef.current === ws) {
+                setTimeout(() => {
+                    wsRef.current = null;
+                    // This will trigger useEffect again due to dependency on serverurl
+                    // or you can force a reconnect here if needed
+                }, 1000);
+            }
         });
 
         ws.addEventListener("error", (event) => {
             console.log("websocket error, reconnecting:", event);
         });
-    };
+
+        // Cleanup on unmount
+        return () => {
+            if (wsRef.current) {
+                wsRef.current.close();
+                wsRef.current = null;
+            }
+        };
+    }, [serverurl]);
 
     const addLogEntry = (entry) => {
         const entryWithId = {

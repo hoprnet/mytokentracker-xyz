@@ -63,7 +63,7 @@ export async function getTokensData() {
       decimals: 18,
       logoURI: "https://coin-images.coingecko.com/coins/images/279/standard/ethereum.png?1696501628",
       price: 2681.96,
-      market_cap: 323504038316,
+      market_cap: Number.MAX_SAFE_INTEGER,
     };
     results.tokens.push(ethToken);
     results.timestamp = new Date().toISOString().replace('Z','+00:00');
