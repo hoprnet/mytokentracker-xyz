@@ -17,10 +17,7 @@ function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
     const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
-    const [etherBalance, set_etherBalance] = useState(null);
-    const [portfolioLoading, set_portfolioLoading] = useState(false);
     const [use_uHTTP, set_use_uHTTP] = useState(false);
-    const [reloadIcons, set_reloadIcons] = useState(false);
     const [iteration, set_iteration] = useState(0);
     const [downloadedIcons, set_downloadedIcons] = useState({});
     const inProgress = useRef(new Set());
@@ -37,8 +34,6 @@ function Portfolio({ serverurl }) {
     const getIconWrapper = async (portfolio, downloadedIcons) => {
         if (portfolio === null) return;
         const tokenAddresses = Object.keys(portfolio);
-        console.log('Portfolio:', portfolio);
-        console.log('tokenAddresses:', tokenAddresses);
         for (const tokenAddress of tokenAddresses) {
             if (!db.tokenArr.includes(tokenAddress)) continue;
             if (inProgress.current.has(tokenAddress)) continue;
@@ -59,32 +54,29 @@ function Portfolio({ serverurl }) {
 
     const clearData = () => {
         set_portfolio(null);
-        set_etherBalance(null);
+        inProgress.current = new Set();
     }
 
     async function getData(ethAddress, uHTTP = false) {
         clearData();
-        set_portfolioLoading(true);
-        set_iteration(num => num + 1);
         set_downloadedIcons({});
 
         /* - Centralized main endpoint - */
         try {
-           // throw new Error('Test error');
+        //    throw new Error('Test error');
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`);
             if (rez.ok) {
                 const json = await rez.json();
                 if (json.tokens || (json && json.ETH && json.ETH.balance > 0)) {
                     set_lastEthAddress(ethAddress);
-                    set_etherBalance(json.ETH.rawBalance)
                     const balances = {}
+                    balances['0x0'] = json.ETH.rawBalance;
                     json.tokens.forEach(token => {
                         balances[token.tokenInfo.address] = token.rawBalance;
                     })
-                    console.log(balances);
+                    console.log('ethplorer balances:', balances);
                     set_portfolio(balances);
                 }
-                set_portfolioLoading(false);
                 return;
             }
         } catch (error) {
@@ -106,7 +98,6 @@ function Portfolio({ serverurl }) {
             console.error('Error fetching data using RPC endpoints:', error);
         }
 
-        set_portfolioLoading(false);
     }
 
     async function getTokenBalancesWrapper(address, tokenAddresses, uHTTP) {
@@ -120,7 +111,7 @@ function Portfolio({ serverurl }) {
                 continue;
             }
 
-            console.log(`tokenBalances ${rpcUrl}:`, tokenBalances);
+            console.log(`RPC balances (${rpcUrl}):`, tokenBalances);
 
             set_portfolio(old => {
                 if (old === null) {
@@ -197,21 +188,6 @@ function Portfolio({ serverurl }) {
                         </thead>
 
                         <tbody>
-                            {
-                                etherBalance && etherBalance !== '0' &&
-                                <tr>
-                                    <td className="icon">
-                                        <Icon
-                                            icon={downloadedIcons['0x0']}
-                                        />
-                                    </td>
-                                    <td className="name">Ether</td>
-                                    <td className="balance">
-                                        {formatBalance(etherBalance)}{` `}
-                                        ETH
-                                    </td>
-                                </tr>
-                            }
                             {
                                 portfolio && db.tokenArr.map(tokenAddress => {
                                     if (portfolio[tokenAddress] === undefined) return null;
