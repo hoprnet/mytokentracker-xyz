@@ -1,5 +1,6 @@
 export const db = {
   "tokenArr": [
+    "0x0",
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     "0xb8c77482e45f1f44de1745f52c74426c631bdd52",
     "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -3033,7 +3034,6 @@ export const db = {
     "0xfa955ec865f51c55e3b6ce02528a6844c2eb9c26",
     "0x9012744b7a564623b6c3e40b144fc196bdedf1a9",
     "0x10703ca5e253306e2ababd68e963198be8887c81",
-    "0xb8c3b7a2a618c552c23b1e4701109a9e756bab67",
     "0xa4ef4b0b23c1fc81d3f9ecf93510e64f58a4a016",
     "0x009178997aff09a67d4caccfeb897fb79d036214",
     "0xfa5b75a9e13df9775cf5b996a049d9cc07c15731",
@@ -5222,12 +5222,6 @@ export const db = {
       "symbol": "1INCH",
       "price": 0.240629,
       "market_cap": 333556526
-    },
-    "0xb8c3b7a2a618c552c23b1e4701109a9e756bab67": {
-      "name": "1INCH yVault",
-      "symbol": "YV1INCH",
-      "price": 0.257342,
-      "market_cap": 0
     },
     "0xa4ef4b0b23c1fc81d3f9ecf93510e64f58a4a016": {
       "name": "1MillionNFTs",

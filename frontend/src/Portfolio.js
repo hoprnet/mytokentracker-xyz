@@ -7,7 +7,6 @@ import { getTokenBalances } from "./functions";
 import { getIcon, getIcon_uHTTP } from "./functions";
 
 /* - RPC rescue - */
-db.tokenArr.unshift('0x0'); //adding 0x0 to the beginning of the array to get ETH balance
 const addressLength = db.tokenArr.length; //adding 1 to account for ETH balance
 const balancesPerCall = 100;
 const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
@@ -17,10 +16,9 @@ function Portfolio({ serverurl }) {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
     const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
-    const [use_uHTTP, set_use_uHTTP] = useState(false);
-    const [iteration, set_iteration] = useState(0);
     const [downloadedIcons, set_downloadedIcons] = useState({});
     const inProgress = useRef(new Set());
+    const use_uHTTP = useRef(false);
 
     useEffect(() => {
         db.rpcs.shuffle();
@@ -31,25 +29,31 @@ function Portfolio({ serverurl }) {
         getIconWrapper(portfolio, downloadedIcons);
     }, [portfolio]);
 
-    const getIconWrapper = async (portfolio, downloadedIcons) => {
+    const getIconWrapper = async (portfolio) => {
         if (portfolio === null) return;
         const tokenAddresses = Object.keys(portfolio);
+
+        const iconPromises = [];
+
         for (const tokenAddress of tokenAddresses) {
             if (!db.tokenArr.includes(tokenAddress)) continue;
             if (inProgress.current.has(tokenAddress)) continue;
             inProgress.current.add(tokenAddress); // Mark as in-progress
 
             console.log('Getting icon for:', tokenAddress);
-            const icon = await getIcon(tokenAddress);
-            if (icon) {
-                set_downloadedIcons(old => {
-                    return {
-                        ...old,
-                        [tokenAddress]: icon
+            const promise = (use_uHTTP.current ? getIcon_uHTTP(tokenAddress) : getIcon(tokenAddress))
+                .then(icon => {
+                    if (icon) {
+                        set_downloadedIcons(old => ({
+                            ...old,
+                            [tokenAddress]: icon
+                        }));
                     }
-                })
-            }
+                });
+            iconPromises.push(promise);
         }
+
+        await Promise.all(iconPromises);
     }
 
     const clearData = () => {
@@ -57,13 +61,12 @@ function Portfolio({ serverurl }) {
         inProgress.current = new Set();
     }
 
-    async function getData(ethAddress, uHTTP = false) {
+    async function getData(ethAddress) {
         clearData();
         set_downloadedIcons({});
 
         /* - Centralized main endpoint - */
         try {
-        //    throw new Error('Test error');
             const rez = await fetch(`https://api.ethplorer.io/getAddressInfo/${ethAddress}?apiKey=freekey`);
             if (rez.ok) {
                 const json = await rez.json();
@@ -89,7 +92,7 @@ function Portfolio({ serverurl }) {
             const startIndex = i * balancesPerCall;
             const endIndex = Math.min(startIndex + balancesPerCall, addressLength);
             const tokenAddresses = db.tokenArr.slice(startIndex, endIndex);
-            jobs.push(getTokenBalancesWrapper(ethAddress, tokenAddresses, uHTTP));
+            jobs.push(getTokenBalancesWrapper(ethAddress, tokenAddresses));
         }
         console.log('Jobs:', jobs);
         try {
@@ -100,7 +103,7 @@ function Portfolio({ serverurl }) {
 
     }
 
-    async function getTokenBalancesWrapper(address, tokenAddresses, uHTTP) {
+    async function getTokenBalancesWrapper(address, tokenAddresses) {
         for (let i = 0; i < db.rpcs.length; i++) {
             const rpcUrl = db.rpcs[i];
             db.rpcs.moveFirstToEnd();
@@ -157,6 +160,7 @@ function Portfolio({ serverurl }) {
                             value="Tracker Search"
                             onClick={() => {
                                 if (lastEthAddress !== ethAddress) {
+                                    use_uHTTP.current = false;
                                     getData(ethAddress);
                                 }
                             }}
@@ -166,7 +170,8 @@ function Portfolio({ serverurl }) {
                             value="I'm Feeling Private"
                             onClick={() => {
                                 if (lastEthAddress !== ethAddress) {
-                                    getData(ethAddress, true);
+                                    use_uHTTP.current = true;
+                                    getData(ethAddress);
                                 }
                             }}
                         />
