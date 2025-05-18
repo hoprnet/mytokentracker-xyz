@@ -26,7 +26,7 @@ function Portfolio({ serverurl }) {
 
     useEffect(() => {
         console.log('Portfolio:', portfolio);
-        getIconWrapper(portfolio, downloadedIcons);
+        getIconWrapper(portfolio);
     }, [portfolio]);
 
     const getIconWrapper = async (portfolio) => {
