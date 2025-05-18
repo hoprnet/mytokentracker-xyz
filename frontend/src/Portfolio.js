@@ -12,11 +12,12 @@ const balancesPerCall = 100;
 const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
 /* - RPC rescue - */
 
-function Portfolio({ serverurl }) {
+function Portfolio() {
     const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
     const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
     const [downloadedIcons, set_downloadedIcons] = useState({});
+    const [iteration, set_iteration] = useState(0);
     const inProgress = useRef(new Set());
     const use_uHTTP = useRef(false);
 
@@ -27,7 +28,7 @@ function Portfolio({ serverurl }) {
     useEffect(() => {
         console.log('Portfolio:', portfolio);
         getIconWrapper(portfolio);
-    }, [portfolio]);
+    }, [portfolio, iteration]);
 
     const getIconWrapper = async (portfolio) => {
         if (portfolio === null) return;
@@ -109,7 +110,6 @@ function Portfolio({ serverurl }) {
             db.rpcs.moveFirstToEnd();
             const tokenBalances = await getTokenBalances(rpcUrl, address, tokenAddresses);
             if (!tokenBalances) {
-                //    console.log(`Error with RPC ${rpcUrl}, trying next one...`);
                 db.rpcs.moveFirstToEnd();
                 continue;
             }
@@ -159,8 +159,10 @@ function Portfolio({ serverurl }) {
                             type="button"
                             value="Tracker Search"
                             onClick={() => {
+                                use_uHTTP.current = false;
+                                inProgress.current = new Set();
+                                set_iteration(old => old + 1);
                                 if (lastEthAddress !== ethAddress) {
-                                    use_uHTTP.current = false;
                                     getData(ethAddress);
                                 }
                             }}
@@ -169,8 +171,10 @@ function Portfolio({ serverurl }) {
                             type="button"
                             value="I'm Feeling Private"
                             onClick={() => {
+                                use_uHTTP.current = true;
+                                inProgress.current = new Set();
+                                set_iteration(old => old + 1);
                                 if (lastEthAddress !== ethAddress) {
-                                    use_uHTTP.current = true;
                                     getData(ethAddress);
                                 }
                             }}
