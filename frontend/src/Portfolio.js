@@ -7,7 +7,7 @@ import { getTokenBalances } from "./functions";
 import { getIcon, getIcon_uHTTP } from "./functions";
 
 /* - RPC rescue - */
-const addressLength = db.tokenArr.length; //adding 1 to account for ETH balance
+const addressLength = db.tokenArr.length;
 const balancesPerCall = 100;
 const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
 /* - RPC rescue - */
@@ -131,7 +131,7 @@ function Portfolio() {
         }
     }
 
-    const formatBalance = (balance) => millify(Number(formatEther(balance)), { precision: 10, lowercase: true }).replace(' ', '') || '-';
+    const formatBalance = (balance) => millify(Number(formatEther(BigInt(balance))), { precision: 10, lowercase: true }).replace(' ', '') || '-';
 
     const roundTo = 10000;
     const numberOfAddresses = (Math.floor(db.uniqueAddresses.uniqueAddresses / roundTo) * roundTo).toLocaleString('en-US', { maximumFractionDigits: 10 });
