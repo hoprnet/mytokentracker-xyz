@@ -1,20 +1,14 @@
 import './App.css';
+import React from "react";
 import Portfolio from './Portfolio';
 import Logs from './Logs'
-import Fingerprint from './Fingerprint';
-
-
-const serverurl = process.env.REACT_APP_BACKEND_URL;
+const Fingerprint = React.lazy(() => import('./Fingerprint'));
 
 function App() {
   return (
     <div className="App">
-      <Portfolio
-        serverurl={serverurl}
-      />
-      <Logs
-        serverurl={serverurl}
-      />
+      <Portfolio/>
+      <Logs/>
       <Fingerprint/>
     </div>
   );
