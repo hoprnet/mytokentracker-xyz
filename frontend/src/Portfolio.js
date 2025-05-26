@@ -131,6 +131,7 @@ function Portfolio() {
         }
     }
 
+    /* global BigInt */
     const formatBalance = (balance) => millify(Number(formatEther(BigInt(balance))), { precision: 10, lowercase: true }).replace(' ', '') || '-';
 
     const roundTo = 10000;
