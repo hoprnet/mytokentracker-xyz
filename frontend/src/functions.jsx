@@ -1,12 +1,12 @@
 import { Routing } from '@hoprnet/phttp-lib';
 import { db } from "./db.js";
 
-const serverurl = process.env.REACT_APP_BACKEND_URL;
+const serverurl = import.meta.env.VITE_BACKEND_URL;
 let uHTTPOptions = {
-    forceZeroHop: process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP ? JSON.parse(process.env.REACT_APP_uHTTP_FORCE_ZERO_HOP) : false,
+    forceZeroHop: import.meta.env.VITE_uHTTP_FORCE_ZERO_HOP ? JSON.parse(import.meta.env.VITE_uHTTP_FORCE_ZERO_HOP) : false,
 }
-if (process.env.REACT_APP_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = process.env.REACT_APP_uHTTP_DP_ENDPOINT;
-const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOptions);
+if (import.meta.env.VITE_uHTTP_DP_ENDPOINT) uHTTPOptions.discoveryPlatformEndpoint = import.meta.env.VITE_uHTTP_DP_ENDPOINT;
+const uHTTP = new Routing.Routing(import.meta.env.VITE_uHTTP_TOKEN, uHTTPOptions);
 
 export function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

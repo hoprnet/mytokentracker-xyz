@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { formatEther } from 'viem'
-import Icon from "./Icon";
+import Icon from "./Icon.jsx";
 import millify from "millify";
 import { db } from "./db.js";
-import { getTokenBalances } from "./functions";
-import { getIcon, getIcon_uHTTP } from "./functions";
+import { getTokenBalances } from "./functions.jsx";
+import { getIcon, getIcon_uHTTP } from "./functions.jsx";
+import { useUser } from "@civic/auth-web3/react";
 
 /* - RPC rescue - */
 const addressLength = db.tokenArr.length;
@@ -136,6 +137,13 @@ function Portfolio() {
 
     const roundTo = 10000;
     const numberOfAddresses = (Math.floor(db.uniqueAddresses.uniqueAddresses / roundTo) * roundTo).toLocaleString('en-US', { maximumFractionDigits: 10 });
+
+
+    const user = useUser();
+    React.useEffect(() => {
+        console.log('Civic User:', user);
+    }, [user]);
+
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>

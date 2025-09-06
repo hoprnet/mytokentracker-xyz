@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-const serverurl = process.env.REACT_APP_BACKEND_URL;
+const serverurl = import.meta.env.VITE_BACKEND_URL;
 
 function Logs() {
     const [logs, set_Log] = useState([]);
@@ -114,7 +114,7 @@ function Log(props) {
 
     return (
         <div className="log">
-            <span className="req">REQ >></span><br />{' '}
+            <span className="req">REQ {">>"}</span><br />{' '}
             <span className="req">{'IP: '}</span><span className={`${props.myIp === ip ? `myIp` : ''}`}>{ip}</span>
             {' '}<span className="req">{'country: '}</span>{country}
             {city && <>{' '}<span className="req">{'city: '}</span>{city}</>}

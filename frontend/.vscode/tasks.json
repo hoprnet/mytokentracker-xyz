@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install Vite and React plugin",
+			"type": "shell",
+			"command": "yarn add -D vite @vitejs/plugin-react",
+			"group": "build"
+		}
+	]
+}
