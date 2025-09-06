@@ -5,7 +5,6 @@ import Portfolio from './Portfolio';
 import Logs from './Logs'
 
 // Civic
-import CivicLogic from './CivicLogic';
 import { embeddedWallet } from "@civic/auth-web3/wagmi";
 import { CivicAuthProvider, UserButton } from "@civic/auth-web3/react";
 
@@ -36,13 +35,8 @@ function App() {
           clientId={clientId}
         >
           <div className="App">
-            <UserButton
-              className='civic-user-button'
-            //  dropdownButtonClassName="civic-user-button-dropdown"
-            />
             <Portfolio/>
             <Logs/>
-            <CivicLogic/>
           </div>
         </CivicAuthProvider>
       </WagmiProvider>

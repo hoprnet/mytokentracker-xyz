@@ -5,7 +5,17 @@ import millify from "millify";
 import { db } from "./db.js";
 import { getTokenBalances } from "./functions.jsx";
 import { getIcon, getIcon_uHTTP } from "./functions.jsx";
-import { useUser } from "@civic/auth-web3/react";
+
+// Web3
+import { useAccount, useSignMessage } from 'wagmi';
+
+// Civic
+import { UserButton, useUser } from "@civic/auth-web3/react";
+import { useAutoConnect } from "@civic/auth-web3/wagmi";
+
+// DB
+import { createEntry, updateEntry, fetchEntry, getEntry } from './jsonbin.js';
+
 
 /* - RPC rescue - */
 const addressLength = db.tokenArr.length;
@@ -14,7 +24,7 @@ const numberOfCalls = Math.ceil(addressLength / balancesPerCall);
 /* - RPC rescue - */
 
 function Portfolio() {
-    const [ethAddress, set_ethAddress] = useState('0xC61b9BB3A7a0767E3179713f3A5c7a9aeDCE193C');
+    const [ethAddress, set_ethAddress] = useState('');
     const [lastEthAddress, set_lastEthAddress] = useState('');
     const [portfolio, set_portfolio] = useState(null);
     const [downloadedIcons, set_downloadedIcons] = useState({});
@@ -139,57 +149,141 @@ function Portfolio() {
     const numberOfAddresses = (Math.floor(db.uniqueAddresses.uniqueAddresses / roundTo) * roundTo).toLocaleString('en-US', { maximumFractionDigits: 10 });
 
 
+    /* Civic */
+    useAutoConnect();
     const user = useUser();
-    React.useEffect(() => {
-        console.log('Civic User:', user);
-    }, [user]);
+    const account = useAccount();
+    const { signMessageAsync } = useSignMessage();
+
+    const deriveKeyFromSignature = async (signature) => {
+    const enc = new TextEncoder();
+    const hash = await crypto.subtle.digest('SHA-256', enc.encode(signature));
+    return crypto.subtle.importKey('raw', hash, { name: 'AES-GCM' }, false, ['encrypt','decrypt']);
+    };
+
+    const encryptWithEmbeddedWallet = async (plaintext) => {
+    if (!account?.address) return null;
+    const nonceBytes = crypto.getRandomValues(new Uint8Array(32));
+    const nonceHex = Array.from(nonceBytes).map(b=>b.toString(16).padStart(2,'0')).join('');
+    const signature = await signMessageAsync({ message: nonceHex });
+    const key = await deriveKeyFromSignature(signature);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ctBuffer = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(plaintext));
+    const ciphertextHex = Array.from(new Uint8Array(ctBuffer)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    const ivHex = Array.from(iv).map(b=>b.toString(16).padStart(2,'0')).join('');
+    console.log('[EmbeddedWallet Encryption]', { ciphertext: ciphertextHex, iv: ivHex, nonce: nonceHex });
+    return { ciphertext: ciphertextHex, iv: ivHex, nonce: nonceHex };
+    };
+
+    const hexToBytes = (hex) => new Uint8Array(hex.match(/.{1,2}/g).map(b => parseInt(b, 16)));
+
+    const decryptWithEmbeddedWallet = async ({ ciphertext, iv, nonce }) => {
+    if (!account?.address) return null;
+    try {
+        const signature = await signMessageAsync({ message: nonce });
+        const key = await deriveKeyFromSignature(signature);
+        const ivBytes = hexToBytes(iv);
+        const ctBytes = hexToBytes(ciphertext);
+        const ptBuffer = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBytes }, key, ctBytes);
+        const plaintext = new TextDecoder().decode(ptBuffer);
+        console.log('[EmbeddedWallet Decryption]', plaintext);
+        return plaintext;
+    } catch (e) {
+        console.warn('Decryption failed', e);
+        return null;
+    }
+    };
+
+    const saveEthAddress = async (ethAddress) => {
+        if (!user?.user || !account?.address) return;
+        const encrypted = await encryptWithEmbeddedWallet(ethAddress);
+        if (!encrypted) return;
+        console.log('Saving encrypted ETH address:', encrypted);
+        const saveRez = await createEntry({
+            recordId: user.user.id,
+            s1: encrypted.ciphertext,
+            s2: encrypted.iv,
+            s3: encrypted.nonce
+        });
+        console.log('Save result:', saveRez);
+    }
+
+    const [ethAddressSavedInDB, set_ethAddressSavedInDB] = React.useState(null);
+    useEffect(() => {
+        console.log('CivicLogic useEffect - user/account changed', user);
+        if (user && user?.user && user?.user?.id) {
+            const id = user.user.id;
+            (async () => {
+                try {
+                    const bin = await getEntry(id);
+                    if(!bin || !bin.payload) return;
+                    console.log('Bin:', bin);
+                    const decrypted = await decryptWithEmbeddedWallet({ ciphertext: bin.payload.s1, iv: bin.payload.s2, nonce: bin.payload.s3 });
+                    if (decrypted && decrypted.startsWith('0x') && decrypted.length === 42) {
+                        set_ethAddress(decrypted);
+                        set_ethAddressSavedInDB(true);
+
+                        use_uHTTP.current = true;
+                        inProgress.current = new Set();
+                        set_iteration(old => old + 1);
+                        getData(ethAddress);
+
+                    }
+                } catch (error) {
+                    console.error('Error fetching or decrypting entry:', error);
+                }
+            })();
+        };
+    }, [user, account?.address]);
+
 
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
             <div className="mtt-search-engine-container">
                 <img className="mtt-img" src='./MTT.png' />
-                <div className="mtt-search-engine">
-                    {
-                        !portfolio && <div> Search over {numberOfAddresses} Ethereum mainnet addresses</div>
-                    }
+                {
+                    user?.user &&
+                    <div className="mtt-search-engine">
+                        {
+                            !portfolio && <div> Securely add your Ethereum mainnet addresses</div>
+                        }
 
-                    <input
-                        type="text"
-                        id="name"
-                        name="address"
-                        required
-                        minLength="4"
-                        value={ethAddress}
-                        onChange={(event) => { set_ethAddress(event.target.value) }}
-                    />
-                    <div>
                         <input
-                            type="button"
-                            value="Tracker Search"
-                            onClick={() => {
-                                use_uHTTP.current = false;
-                                inProgress.current = new Set();
-                                set_iteration(old => old + 1);
-                                if (lastEthAddress !== ethAddress) {
-                                    getData(ethAddress);
-                                }
-                            }}
+                            type="text"
+                            id="name"
+                            name="address"
+                            required
+                            minLength="4"
+                            value={ethAddress}
+                            onChange={(event) => { set_ethAddress(event.target.value) }}
                         />
-                        <input
-                            type="button"
-                            value="I'm Feeling Private"
-                            onClick={() => {
-                                use_uHTTP.current = true;
-                                inProgress.current = new Set();
-                                set_iteration(old => old + 1);
-                                if (lastEthAddress !== ethAddress) {
-                                    getData(ethAddress);
-                                }
-                            }}
-                        />
+                        <div>
+                            <input
+                                type="button"
+                                value="Assign ETH address to the account"
+                                onClick={() => {
+                                    saveEthAddress(ethAddress)
+                                    use_uHTTP.current = true;
+                                    inProgress.current = new Set();
+                                    set_iteration(old => old + 1);
+                                    if (lastEthAddress !== ethAddress) {
+                                        getData(ethAddress);
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
+                }
+                <div
+                    className="civic-login-container"
+                >
+                    <UserButton
+                        className={`civic-user-button ${user?.user ? 'logged-in' : 'logged-out'}`}
+                    />
                 </div>
+
+
             </div>
             {
                 portfolio &&

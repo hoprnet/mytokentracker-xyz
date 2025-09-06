@@ -4,13 +4,22 @@
     position: fixed;
 }
 
+.civic-login-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 button.civic-user-button {
-    position: absolute;
     border-radius: 3px;
     padding: 3px;
     color: black;
     cursor: default;
     background-color: rgb(240, 240, 240);
+}
+
+button.civic-user-button.logged-in {
+    position: absolute;
     top: 3px;
     left: 3px;
 }
