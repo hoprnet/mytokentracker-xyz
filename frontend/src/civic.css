@@ -1,0 +1,20 @@
+#civic-dropdown-container {
+    top: 3px;
+    width: 200px;
+    position: fixed;
+}
+
+button.civic-user-button {
+    position: absolute;
+    border-radius: 3px;
+    padding: 3px;
+    color: black;
+    cursor: default;
+    background-color: rgb(240, 240, 240);
+    top: 3px;
+    left: 3px;
+}
+
+button.civic-user-button:hover{
+    background-color: rgb(207, 207, 207);
+}
