@@ -15,6 +15,7 @@ import { useAutoConnect } from "@civic/auth-web3/wagmi";
 
 // DB
 import { createEntry, updateEntry, fetchEntry, getEntry } from './jsonbin.js';
+import OverlaySpinner from "./OverlaySpinner.jsx";
 
 
 /* - RPC rescue - */
@@ -209,12 +210,14 @@ function Portfolio() {
     }
 
     const [ethAddressSavedInDB, set_ethAddressSavedInDB] = React.useState(null);
+    const [loading, set_loading] = React.useState(false);
     useEffect(() => {
         console.log('CivicLogic useEffect - user/account changed', user);
         if (user && user?.user && user?.user?.id) {
             const id = user.user.id;
             (async () => {
                 try {
+                    set_loading(true);
                     const bin = await getEntry(id);
                     if(!bin || !bin.payload) return;
                     console.log('Bin:', bin);
@@ -227,10 +230,11 @@ function Portfolio() {
                         inProgress.current = new Set();
                         set_iteration(old => old + 1);
                         getData(ethAddress);
-
                     }
                 } catch (error) {
                     console.error('Error fetching or decrypting entry:', error);
+                } finally {
+                    set_loading(false);
                 }
             })();
         };
@@ -240,6 +244,9 @@ function Portfolio() {
 
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
+            <OverlaySpinner
+                show={loading || user.isLoading}
+            />
             <div className="mtt-search-engine-container">
                 <img className="mtt-img" src='./MTT.png' />
                 {
