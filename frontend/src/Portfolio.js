@@ -168,7 +168,7 @@ function Portfolio() {
                                 }
                             }}
                         />
-                        <input
+                        {/* <input
                             type="button"
                             value="I'm Feeling Private"
                             onClick={() => {
@@ -179,7 +179,7 @@ function Portfolio() {
                                     getData(ethAddress);
                                 }
                             }}
-                        />
+                        /> */}
                     </div>
                 </div>
             </div>
