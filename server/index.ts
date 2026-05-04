@@ -4,7 +4,7 @@ import type {
   ExecutionContext,
 } from "@cloudflare/workers-types";
 import { Env } from "worker-configuration.js";
-const Buffer = require('buffer/').Buffer
+const Buffer = require("buffer/").Buffer;
 
 import tokensFile from "./tokens.json";
 
@@ -45,10 +45,11 @@ export async function handleRequest(
 
   if (path[0] == "myip") {
     const clientIp = request.headers.get("CF-Connecting-IP");
-    return new Response(clientIp, { status: 200,
+    return new Response(clientIp, {
+      status: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-      }
+        "Access-Control-Allow-Origin": "*",
+      },
     });
   }
 
@@ -74,13 +75,13 @@ export async function handleRequest(
 
 async function fetchLogo(url: string, request: WorkerRequest) {
   return fetch(url, request).then(async function (response) {
-      const headers = new Headers(response.headers);
-      headers.set('Access-Control-Allow-Origin', '*');
-      return new Response(response.body, {
-          headers,
-          status: response.status,
-          statusText: response.statusText
-      });
+    const headers = new Headers(response.headers);
+    headers.set("Access-Control-Allow-Origin", "*");
+    return new Response(response.body, {
+      headers,
+      status: response.status,
+      statusText: response.statusText,
+    });
   });
 }
 
