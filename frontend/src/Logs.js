@@ -52,7 +52,7 @@ function Logs() {
                 wsRef.current = null;
             }
         };
-    }, [serverurl]);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const addLogEntry = (entry) => {
         const entryWithId = {
