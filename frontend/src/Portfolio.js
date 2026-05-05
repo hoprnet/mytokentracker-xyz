@@ -140,7 +140,7 @@ function Portfolio() {
     return (
         <div className={`portfolio-container ${portfolio ? 'portfolio-present' : 'no-portfolio'}`}>
             <div className="mtt-search-engine-container">
-                <img className="mtt-img" src='./MTT.png' />
+                <img className="mtt-img" src='./MTT.png' alt=""/>
                 <div className="mtt-search-engine">
                     {
                         !portfolio && <div> Search over {numberOfAddresses} Ethereum mainnet addresses</div>
@@ -204,7 +204,7 @@ function Portfolio() {
                                     return (
                                         <tr
                                             key={`${use_uHTTP}_${lastEthAddress}_${tokenAddress}`}
-                                            aria-address={`${tokenAddress}`}
+                                            data-address={`${tokenAddress}`}
                                         >
                                             <td className="icon icon-cell" >
                                                 <Icon

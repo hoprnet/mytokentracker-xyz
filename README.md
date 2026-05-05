@@ -10,7 +10,6 @@ Token list is taken from `server/tokens.json`
 
 Backend:
 
-
 ```bash
 yarn
 wrangler dev

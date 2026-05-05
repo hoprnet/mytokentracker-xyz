@@ -1,5 +1,4 @@
 import { Routing } from '@hoprnet/phttp-lib';
-import { db } from "./db.js";
 
 const serverurl = process.env.REACT_APP_BACKEND_URL;
 let uHTTPOptions = {
@@ -11,16 +10,13 @@ const uHTTP = new Routing.Routing(process.env.REACT_APP_uHTTP_TOKEN, uHTTPOption
 export function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        const v = c === 'x' ? r : ((r & 0x3) | 0x8);
         return v.toString(16);
     });
 }
 
-async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // Add shuffle method to Array prototype
+// eslint-disable-next-line no-extend-native
 Array.prototype.shuffle = function () {
     for (let i = this.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -30,6 +26,7 @@ Array.prototype.shuffle = function () {
 };
 
 // Add a method to move the first element to the end of the array
+// eslint-disable-next-line no-extend-native
 Array.prototype.moveFirstToEnd = function () {
     if (this.length > 0) {
         const firstElement = this.shift(); // Remove the first element
