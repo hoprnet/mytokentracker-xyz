@@ -13,14 +13,13 @@ concurrency:
 
 jobs:
   # Keeps the `Merge gate` check name present in every repository so the
-  # ruleset can require it uniformly (hoprnet/hopr-devops#372). It grows
-  # a `needs:` list when the repository gets real PR jobs.
+  # ruleset can require it uniformly (hoprnet/hopr-devops#372). It becomes
+  # an alls-green gate with a `needs:` list when the repository gets real PR jobs
+  # (alls-green rejects an empty `needs`).
   merge-gate:
     name: Merge gate
     if: always()
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
-        with:
-          jobs: ${{ toJSON(needs) }}
+      - run: echo "no PR checks in this repository"
