@@ -5,6 +5,13 @@ on:
     branches:
       - staging
 
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-stage
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: depot-ubuntu-24.04

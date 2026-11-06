@@ -1,7 +1,14 @@
 name: Deploy (Experimental)
 
 on:
-  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
 
 jobs:
   deploy:
